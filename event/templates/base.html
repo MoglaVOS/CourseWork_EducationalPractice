@@ -127,27 +127,8 @@
                 </div>
             </div>
             <ul class="app-menu">
-                <li>
-                    <a class="app-menu__item active" href="{% url 'event:dashboard' %}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Панель управления</span></a>
-                </li>
-                <li>
-                    <a class="app-menu__item" href="{% url 'event:calendar' %}"><i class="app-menu__icon fa fa-calendar"></i><span class="app-menu__label">Календарь</span></a>
-                </li>
-                <li class="treeview">
-                    <a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-th-list"></i><span class="app-menu__label">События</span><i class="treeview-indicator fa fa-angle-right"></i></a>
-                    <ul class="treeview-menu">
-                        <li>
-                            <a class="treeview-item" href="{!% url 'calendarapp:running_events' %}"><i class="icon fa fa-circle-o"></i> Текущие</a>
-                        </li>
-                        <li>
-                            <a class="treeview-item" href="{!% url 'calendarapp:running_events' %}"><i class="icon fa fa-circle-o"></i> Предстоящие</a>
-                        </li>
-                        <li>
-                            <a class="treeview-item" href="{!% url 'calendarapp:all_events' %}"><i class="icon fa fa-circle-o"></i> Все</a>
-                        </li>
-                    </ul>
-                </li>
-
+                {% block sidebar %}
+                {% endblock sidebar %}
             </ul>
         </aside>
         <main class="app-content">
