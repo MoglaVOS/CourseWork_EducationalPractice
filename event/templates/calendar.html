@@ -3,9 +3,7 @@
 
 {% block title %}Календарь событий{% endblock title %}
 
-{% block extracss %}
-  <link href="{% static 'css/main.css' %}" rel="stylesheet" />
-{% endblock extracss %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'css/calendar.css' %}" />{% endblock css %}
 
 {% block breadcrumb %}
   <div>
@@ -18,6 +16,29 @@
   </ul>
 {% endblock breadcrumb %}
 
+{% block sidebar %}
+<li>
+    <a class="app-menu__item" href="{% url 'event:dashboard' %}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Панель управления</span></a>
+</li>
+<li>
+    <a class="app-menu__item active" href="{% url 'event:calendar' %}"><i class="app-menu__icon fa fa-calendar"></i><span class="app-menu__label">Календарь</span></a>
+</li>
+<li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-th-list"></i><span class="app-menu__label">События</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+    <ul class="treeview-menu">
+        <li>
+            <a class="treeview-item" href="{!% url 'calendarapp:running_events' %}"><i class="icon fa fa-circle-o"></i> Текущие</a>
+        </li>
+        <li>
+            <a class="treeview-item" href="{!% url 'calendarapp:running_events' %}"><i class="icon fa fa-circle-o"></i> Предстоящие</a>
+        </li>
+        <li>
+            <a class="treeview-item" href="{!% url 'calendarapp:all_events' %}"><i class="icon fa fa-circle-o"></i> Все</a>
+        </li>
+    </ul>
+</li>
+{% endblock sidebar %}
+
 {% block content %}
 <div class="row">
     <div class="col-md-12">
@@ -25,7 +46,7 @@
             <div class="col-md-3">
                 <div id="external-events">
                     <h4 class="mb-4">Текущие события</h4>
-                    <!--{!% for event in events_month %}
+                    {% for event in events_month %}
                       <div class="fc-event">
                           <h3>{{ event.title }}</h3>
                           <p>{{ event.description }}</p>
@@ -34,9 +55,9 @@
                           <p>From: {{ event.start_time }}</p>
                           <p>To: {{ event.end_time }}</p>
                       </div>
-                    {!% empty %}
+                    {% empty %}
                       <p>Нет текущих событий</p>
-                    {!% endfor %}-->
+                    {% endfor %}
                 </div>
             </div>
             <div class="col-md-9">
@@ -220,28 +241,7 @@
         },
         editable: true,
         dayMaxEvents: true, // allow "more" link when too many events
-        events: {{ events|safe }},
-        // events: [
-        //   {
-        //     title: 'All Day Event',
-        //     start: '2021-06-26'
-        //   },
-        //   {
-        //     groupId: 999,
-        //     title: 'Repeating Event',
-        //     start: '2020-09-16T16:00:00'
-        //   },
-        //   {
-        //     title: 'Conference',
-        //     start: '2020-09-11',
-        //     end: '2020-09-13'
-        //   },
-        //   {
-        //     title: 'Click for Google',
-        //     url: 'http://google.com/',
-        //     start: '2020-09-28'
-        //   }
-        // ]
+        events: {% if events %}{{ events|safe }}{% else %}[]{% endif %}
       });
 
       calendar.render();
