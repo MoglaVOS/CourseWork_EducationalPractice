@@ -9,5 +9,5 @@ urlpatterns = [
     path("signin/", views.SignInView.as_view(), name="signin"),
     path("signout/", views.signout, name="signout"),
     path("profile/", views.ProfileView.as_view(), name="profile"),
-    # path("changepassword/", views.changepassword, name="change-password"),
+    path("change_password/", views.ChangePasswordView.as_view(), name="change_password"),
 ]

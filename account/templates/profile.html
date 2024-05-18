@@ -19,15 +19,15 @@
                         <div class="row justify-content-center py-md-5">
                             <div class="col-lg-9">
                                 <div class="social-wrap">
-                                    <h2 class="mb-3 text-center">Профиль</h2>
+                                    <h3 class="mb-3 text-center">Профиль пользователя</h3>
                                 </div>
                                 <form action="#" method="post" class="signup-form">
                                     {% csrf_token %}
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
+                                                Здравствуйте,
                                                 <label class="label" for="fio"><h3>
-                                                    Здравствуйте,
                                                     {{ user.second_name }}
                                                     {{ user.first_name }}
                                                     {{ user.surname }}!
@@ -36,47 +36,23 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="email">Адрес эл. почты --- </label>
-                                                {{ user.email }}
+                                                <label class="label" for="email">E-Mail:</label> {{ user.email }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="position">Отдел --- </label>
-                                                {{ user.department }}
+                                                <label class="label" for="position">Отдел:</label> {{ user.department }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="salary">Должность --- </label>
-                                                {{ user.position }}
+                                                <label class="label" for="salary">Должность:</label> {{ user.position }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="label" for="fio"><h3>Изменить пароль: </h3></label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col">
-                                            <label for="old_password">Старый пароль</label>
-                                            {{ form.password1 }}
-                                        </div>
-                                        <div class="form-group col">
-                                            <label for="new_password1">Новый пароль</label>
-                                            {{ form.password2 }}
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="form-group d-flex justify-content-between">
-                                                <div>
-                                                    <a href="{% url 'account:changepassword' %}">Изменить пароль</a>
-                                                </div>
-                                                <div>
-                                                    <div class="back-button">
-                                                        <a href="{% url 'event:calendar' %}"
-                                                           class="btn btn-primary">Назад</a>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <a href="{% url 'event:calendar' %}" class="btn btn-danger">Назад</a>
+                                            <a href="{% url 'account:change_password' %}" class="btn btn-secondary">Изменить
+                                                пароль</a>
                                         </div>
                                     </div>
                                 </form>

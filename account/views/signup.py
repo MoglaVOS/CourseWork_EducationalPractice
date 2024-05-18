@@ -11,14 +11,14 @@ class SignUpView(View):
     form_class = SignUpForm
 
     def get(self, request, *args, **kwargs):
-        forms = self.form_class()
-        context = {"form": forms}
+        form = self.form_class()
+        context = {"form": form}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        forms = self.form_class(request.POST)
-        if forms.is_valid():
-            forms.save()
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
             return redirect("account:signin")
-        context = {"form": forms}
+        context = {"form": form}
         return render(request, self.template_name, context)
