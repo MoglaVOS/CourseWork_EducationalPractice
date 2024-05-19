@@ -6,6 +6,10 @@
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static 'css/calendar.css' %}"/>{% endblock css %}
 
 {% block breadcrumb %}
+<div>
+    <h1><i class="app-menu__icon fa fa-dashboard"></i> Календарь</h1>
+    <p>Собственно, сам календарь событий</p>
+</div>
 <ul class="app-breadcrumb breadcrumb">
     <li class="breadcrumb-item">
         <a style="color:#2e2e2e" href="{% url 'event:calendar' %}"><i class="fa fa-home fa-lg"></i></a>
@@ -246,6 +250,7 @@
                 {% if events %}
                 {{ events|safe }}
                 {% else %}
+                []
                 {% endif %}
         });
 

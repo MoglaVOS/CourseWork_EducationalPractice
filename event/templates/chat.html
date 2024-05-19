@@ -24,39 +24,46 @@
 </li>
 {% endblock sidebar %}
 
+{% block breadcrumb %}
+<div>
+    <h1><i class="app-menu__icon fa fa-comment"></i> Чат</h1>
+    <p>Общий чат</p>
+</div>
+<ul class="app-breadcrumb breadcrumb">
+    <li class="breadcrumb-item">
+        <a style="color:#2e2e2e" href="{% url 'event:calendar' %}"><i class="fa fa-home fa-lg"></i></a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{% url 'event:chat' %}">Чат</a>
+    </li>
+</ul>
+{% endblock breadcrumb %}
+
 {% block content %}
 <div class="row">
-    <div class="col-md-6 col-lg-3">
-        <div class="widget-small primary coloured-icon">
-            <i class="icon fa fa-files-o fa-3x"></i>
-            <div class="info">
-                <h4>Всего сообщений</h4>
-                <p><b>{{ message_count }}</b></p>
-            </div>
-        </div>
-    </div>
-
     <div class="col-md-12">
         <div class="tile">
-            <div class="tile-body">
-                {% for query in messages %}
-                <p><b>{{query.user.second_name}} {{query.user.first_name}}</b>: {{query.message}}</p>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="tile">
-            <form method="post">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Сообщение</label>
-                        {{ form.message }}
+            <h3 class="tile-title">Общий чат</h3>
+            <div class="messanger">
+                <div class="messages" style="max-height: 500px">
+                    {% for query in messages %}
+                    <div class="message {% if query.user == request.user %}me{% endif %}">
+                        <img src="{% static 'images/avatar.jpg' %}" width="32" height="32">
+                        <p class="info">
+                            <b>{{query.user.second_name}} {{query.user.first_name}}</b><br>
+                            <span>{{query.message}}</span>
+                        </p>
                     </div>
+                    {% endfor %}
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Отправить</button>
-                </div>
-            </form>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="sender">
+                        {{ form.message }}
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-paper-plane"></i></button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -41,7 +41,7 @@ class ChatForm(forms.ModelForm):
         model = ChatMessage
         fields = ["message"]
         widgets = {
-            "message": forms.TextInput(attrs={"class": "form-control"})
+            "message": forms.TextInput(attrs={"class": "form-control", "placeholder": "Напишите сообщение..."})
         }
 
     def __init__(self, *args, **kwargs):
