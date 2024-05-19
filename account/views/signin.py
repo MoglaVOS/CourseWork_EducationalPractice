@@ -26,7 +26,6 @@ class SignInView(View):
             if user:
                 login(request, user)
                 return redirect("event:calendar")
-            # TODO: Add proper error handler
             return redirect("account:signup")
 
         context = {"form": form}
