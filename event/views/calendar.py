@@ -15,17 +15,20 @@ class CalendarView(LoginRequiredMixin, View):
     form_class = EventCreateForm
 
     def get(self, request):
-        form = self.form_class()
-        events = Event.objects.get_all_events(user=request.user)
-        events_today = Event.objects.get_events_by_date(user=request.user, date=datetime.today())
-        event_list = []
+        form = self.form_class()  # Create event form
+        events_today = Event.objects.get_events_by_date(user=request.user, date=datetime.today())  # Side panel
+        event_list = []  # Calendar table
 
-        for event in events:
+        # Fill calendar table
+        for event in Event.objects.get_all_events(user=request.user):
             event_list.append({
                 "id": event.id,
                 "title": event.title,
                 "start": event.start_time.strftime("%Y-%m-%dT%H:%M:%S"),
                 "end": event.end_time.strftime("%Y-%m-%dT%H:%M:%S"),
+                "location": event.location,
+                "type": event.type,
+                "priority": event.priority,
                 "description": event.description,
             })
 
