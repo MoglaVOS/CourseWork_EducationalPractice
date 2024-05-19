@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Общий чат | Palendar{% endblock title %}
+
+{% block sidebar %}
+<li>
+    <a class="app-menu__item" href="{% url 'event:dashboard' %}">
+        <i class="app-menu__icon fa fa-dashboard"></i>
+        <span class="app-menu__label">Панель управления</span>
+    </a>
+</li>
+<li>
+    <a class="app-menu__item" href="{% url 'event:calendar' %}">
+        <i class="app-menu__icon fa fa-calendar"></i>
+        <span class="app-menu__label">Календарь</span>
+    </a>
+</li>
+<li>
+    <a class="app-menu__item active" href="{% url 'event:chat' %}">
+        <i class="app-menu__icon fa fa-comment"></i>
+        <span class="app-menu__label">Чат</span>
+    </a>
+</li>
+{% endblock sidebar %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-lg-3">
+        <div class="widget-small primary coloured-icon">
+            <i class="icon fa fa-files-o fa-3x"></i>
+            <div class="info">
+                <h4>Всего сообщений</h4>
+                <p><b>{{ message_count }}</b></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="tile">
+            <div class="tile-body">
+                {% for query in messages %}
+                <p><b>{{query.user.second_name}} {{query.user.first_name}}</b>: {{query.message}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="tile">
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Сообщение</label>
+                        {{ form.message }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<script type="text/javascript" src="{% static 'js/plugins/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/plugins/dataTables.bootstrap.min.js' %}"></script>
+<script type="text/javascript">$('#sampleTable').DataTable();</script>
+{% endblock extra_scripts %}

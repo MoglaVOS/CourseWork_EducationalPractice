@@ -1,7 +1,9 @@
 from django import forms
 from django.forms import DateInput, ModelForm
 
+from account.models.user import User
 from event.models import Event
+from event.models.chat import ChatMessage
 
 
 class EventCreateForm(ModelForm):
@@ -31,3 +33,17 @@ class EventCreateForm(ModelForm):
         if commit:
             event.save()
         return event
+
+class ChatForm(forms.ModelForm):
+    """ Send message Form"""
+
+    class Meta:
+        model = ChatMessage
+        fields = ["message"]
+        widgets = {
+            "message": forms.TextInput(attrs={"class": "form-control"})
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(ChatForm, self).__init__(*args, **kwargs)
