@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import datetime
 
 from event.forms import EventCreateForm
 from event.models import Event
@@ -9,13 +10,14 @@ from event.models import Event
 class CalendarView(LoginRequiredMixin, View):
     """ Calendar View. Main page """
 
+    login_url = "account:signin"
     template_name = "calendar.html"
     form_class = EventCreateForm
 
     def get(self, request):
         form = self.form_class()
         events = Event.objects.get_all_events(user=request.user)
-        events_month = Event.objects.get_running_events(user=request.user)
+        events_today = Event.objects.get_events_by_date(user=request.user, date=datetime.today())
         event_list = []
 
         for event in events:
@@ -30,7 +32,7 @@ class CalendarView(LoginRequiredMixin, View):
         context = {
             "form": form,
             "events": event_list,
-            "events_month": events_month
+            "events_today": events_today
         }
         return render(request, self.template_name, context)
 

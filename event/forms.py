@@ -24,3 +24,10 @@ class EventCreateForm(ModelForm):
 
         self.fields["start_time"].input_formats = ("%Y-%m-%dT%H:%M",)
         self.fields["end_time"].input_formats = ("%Y-%m-%dT%H:%M",)
+
+    def save(self, commit=True):
+        """ Save event """
+        event = super().save(commit=False)
+        if commit:
+            event.save()
+        return event

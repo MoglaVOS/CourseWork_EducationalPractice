@@ -2,152 +2,114 @@
 
 <!DOCTYPE html>
 <html lang="ru">
-    <head>
-        <meta name="description" content="Календарь событий"/>
-        <meta charset="utf-8"/>
-        <title>{% block title %}{% endblock title %}</title>
-        <!-- Main CSS-->
-        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
-        
-        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-        {% block css %}{% endblock css %}
-    </head>
-    <body class="app sidebar-mini">
-        <!-- Navbar-->
-        <header class="app-header">
-            <a class="app-header__logo" href="#">Календарь</a>
-            <!-- Sidebar toggle button-->
-            <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
-            <!-- Navbar Right Menu-->
-            <ul class="app-nav">
-
-                <!--Notification Menu-->
-                <li class="dropdown">
-                    <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Show notifications"><i class="fa fa-bell-o fa-lg"></i></a>
-                    <ul class="app-notification dropdown-menu dropdown-menu-right">
-                        <li class="app-notification__title">You have 4 new notifications.</li>
-                        <div class="app-notification__content">
-                            <li>
-                                <a class="app-notification__item" href="javascript:;">
-                                    <span class="app-notification__icon">
-                                        <span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-primary"></i><i class="fa fa-envelope fa-stack-1x fa-inverse"></i></span>
-                                    </span>
-                                    <div>
-                                        <p class="app-notification__message">Lisa sent you a mail</p>
-                                        <p class="app-notification__meta">2 min ago</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="app-notification__item" href="javascript:;">
-                                    <span class="app-notification__icon">
-                                        <span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-danger"></i><i class="fa fa-hdd-o fa-stack-1x fa-inverse"></i></span>
-                                    </span>
-                                    <div>
-                                        <p class="app-notification__message">Mail server not working</p>
-                                        <p class="app-notification__meta">5 min ago</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="app-notification__item" href="javascript:;">
-                                    <span class="app-notification__icon">
-                                        <span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-success"></i><i class="fa fa-money fa-stack-1x fa-inverse"></i></span>
-                                    </span>
-                                    <div>
-                                        <p class="app-notification__message">Transaction complete</p>
-                                        <p class="app-notification__meta">2 days ago</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <div class="app-notification__content">
-                                <li>
-                                    <a class="app-notification__item" href="javascript:;">
-                                        <span class="app-notification__icon">
-                                            <span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-primary"></i><i class="fa fa-envelope fa-stack-1x fa-inverse"></i></span>
-                                        </span>
-                                        <div>
-                                            <p class="app-notification__message">Lisa sent you a mail</p>
-                                            <p class="app-notification__meta">2 min ago</p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="app-notification__item" href="javascript:;">
-                                        <span class="app-notification__icon">
-                                            <span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-danger"></i><i class="fa fa-hdd-o fa-stack-1x fa-inverse"></i></span>
-                                        </span>
-                                        <div>
-                                            <p class="app-notification__message">Mail server not working</p>
-                                            <p class="app-notification__meta">5 min ago</p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="app-notification__item" href="javascript:;">
-                                        <span class="app-notification__icon">
-                                            <span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-success"></i><i class="fa fa-money fa-stack-1x fa-inverse"></i></span>
-                                        </span>
-                                        <div>
-                                            <p class="app-notification__message">Transaction complete</p>
-                                            <p class="app-notification__meta">2 days ago</p>
-                                        </div>
-                                    </a>
-                                </li>
-                            </div>
+<head>
+    <meta name="description" content="Календарь событий"/>
+    <meta charset="utf-8"/>
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    {% block css %}{% endblock css %}
+</head>
+<body class="app sidebar-mini">
+<!-- Navbar-->
+<header class="app-header">
+    <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
+    <a class="app-header__logo" href="{% url 'event:calendar' %}"><b>P</b>alendar</a>
+    <!-- Navbar Right Menu-->
+    <ul class="app-nav">
+        <!--Notification Menu-->
+        <li class="dropdown">
+            <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Show notifications">
+                <i class="fa fa-bell-o fa-lg"></i>
+            </a>
+            <ul class="app-notification dropdown-menu dropdown-menu-right">
+                <li class="app-notification__title">You have N/A new notifications.</li>
+                <li class="app-notification__content">
+                    <a class="app-notification__item" href="javascript:">
+                        <span class="app-notification__icon">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </span>
+                        <div>
+                            <p class="app-notification__message">Lisa sent you a mail</p>
+                            <p class="app-notification__meta">2 min ago</p>
                         </div>
-                        <li class="app-notification__footer"><a href="#">See all notifications.</a></li>
-                    </ul>
+                    </a>
                 </li>
-                <!-- User Menu-->
-                <li class="dropdown">
-                    <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Open Profile Menu"><i class="fa fa-user fa-lg"></i></a>
-                    <ul class="dropdown-menu settings-menu dropdown-menu-right">
-                        <li>
-                            <a class="dropdown-item" href="#"><i class="fa fa-cog fa-lg"></i> Настройки</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'account:profile' %}"><i class="fa fa-user fa-lg"></i> Профиль</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'account:signout' %}"><i class="fa fa-sign-out fa-lg"></i> Выйти</a>
-                        </li>
-                    </ul>
+                <li>
+                    <a class="app-notification__item" href="javascript:">
+                        <span class="app-notification__icon">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                <i class="fa fa-hdd-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </span>
+                        <div>
+                            <p class="app-notification__message">Mail server not working</p>
+                            <p class="app-notification__meta">5 min ago</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="app-notification__footer">
+                    <a href="#">See all notifications.</a>
                 </li>
             </ul>
-        </header>
-        <!-- Sidebar menu-->
-        <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-        <aside class="app-sidebar">
-            <div class="app-sidebar__user">
-                <img class="app-sidebar__user-avatar" src="{% static 'images/avatar.jpg' %}" alt="User Image" height="50px" width="50px"/>
-                <div>
-                    <p class="app-sidebar__user-name">{{ user.second_name }} {{ user.first_name }}</p>
-                    <p class="app-sidebar__user-designation">{{ user.position }}</p>
-                </div>
-            </div>
-            <ul class="app-menu">
-                {% block sidebar %}
-                {% endblock sidebar %}
+        </li>
+        <!-- User Menu-->
+        <li class="dropdown">
+            <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Open Profile Menu">
+                <i class="fa fa-user fa-lg"></i>
+            </a>
+            <ul class="dropdown-menu settings-menu dropdown-menu-right">
+                <li>
+                    <a class="dropdown-item" href="{% url 'account:profile' %}">
+                        <i class="fa fa-user fa-lg"></i> Профиль
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'account:signout' %}">
+                        <i class="fa fa-sign-out fa-lg"></i> Выйти
+                    </a>
+                </li>
             </ul>
-        </aside>
-        <main class="app-content">
-            <div class="app-title">
-                {% block breadcrumb %}
-                {% endblock breadcrumb %}
-            </div>
-            {% block content %}
-            {% endblock content %}
-        </main>
+        </li>
+    </ul>
+</header>
+<!-- Sidebar menu-->
+<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+<aside class="app-sidebar">
+    <a class="app-sidebar__user" href="{% url 'account:profile' %}">
+        <img class="app-sidebar__user-avatar" src="{% static 'images/avatar.jpg' %}" alt="User Image" height="50px" width="50px"/>
+        <div>
+            <p class="app-sidebar__user-name">{{ user.second_name }} {{ user.first_name }}</p>
+            <p class="app-sidebar__user-designation">{{ user.position }}</p>
+        </div>
+    </a>
+    <ul class="app-menu">
+        {% block sidebar %}
+        {% endblock sidebar %}
+    </ul>
+</aside>
+<main class="app-content">
+    <div class="app-title">
+        {% block breadcrumb %}
+        {% endblock breadcrumb %}
+    </div>
+    {% block content %}
+    {% endblock content %}
+</main>
 
-        <!-- Essential javascripts for application to work-->
-        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-        <script src="{% static 'js/popper.js' %}"></script>
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'js/main.js' %}"></script>
-        <!-- The javascript plugin to display page loading on top-->
-        <script src="{% static 'js/plugins/pace.min.js'%}"></script>
-        {% block extrascripts %}
-        {% endblock extrascripts %}
-    </body>
+<!-- Essential javascript for application -->
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/popper.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<!-- The javascript plugin to display page loading on top -->
+<script src="{% static 'js/plugins/pace.min.js' %}"></script>
+{% block extra_scripts %}
+{% endblock extra_scripts %}
+</body>
 </html>
