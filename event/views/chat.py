@@ -1,8 +1,10 @@
+from datetime import timedelta
 from django.shortcuts import redirect, render
 from django.views.generic import View
 
 from event.forms import ChatForm
 from event.models.chat import ChatMessage
+from event.models.notification import Notification
 
 
 class ChatView(View):
@@ -14,10 +16,14 @@ class ChatView(View):
     def get(self, request, *args, **kwargs):
         # Show form
         form = self.form_class(user=request.user)
+        
+        notifications = Notification.objects.get_upcoming_notifications(user=request.user, time=timedelta(days=2))
+        
         context = {
             "message_count": ChatMessage.objects.get_message_count(),
             "messages": ChatMessage.objects.get_all_messages(),
-            "form": form
+            "form": form,
+            "notifications": notifications
         }
         return render(request, self.template_name, context)
 
@@ -28,9 +34,4 @@ class ChatView(View):
             msg = form.save(commit=False)
             msg.user = request.user
             msg.save()
-            context = {
-                "message_count": ChatMessage.objects.get_message_count(),
-                "messages": ChatMessage.objects.get_all_messages(),
-                "form": form
-            }
-            return render(request, self.template_name, context)
+            return redirect("event:chat")

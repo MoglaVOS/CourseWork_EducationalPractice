@@ -1,10 +1,11 @@
 from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from event.forms import EventCreateForm
 from event.models import Event
+from event.models.notification import Notification
 
 
 class CalendarView(LoginRequiredMixin, View):
@@ -17,6 +18,7 @@ class CalendarView(LoginRequiredMixin, View):
     def get(self, request):
         form = self.form_class()  # Create event form
         events_today = Event.objects.get_events_by_date(user=request.user, date=datetime.today())  # Side panel
+        notifications = Notification.objects.get_upcoming_notifications(user=request.user, time=timedelta(days=2))
         event_list = []  # Calendar table
 
         # Fill calendar table
@@ -35,7 +37,8 @@ class CalendarView(LoginRequiredMixin, View):
         context = {
             "form": form,
             "events": event_list,
-            "events_today": events_today
+            "events_today": events_today,
+            "notifications": notifications
         }
         return render(request, self.template_name, context)
 
