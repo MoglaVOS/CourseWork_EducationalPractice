@@ -56,7 +56,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     surname = models.TextField("Surname", max_length=32, null=True, blank=True)
     position = models.TextField("Position", max_length=100)
     department = models.TextField("Department", max_length=100)
-
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+ 
     objects = UserManager()
 
     USERNAME_FIELD = "email"
