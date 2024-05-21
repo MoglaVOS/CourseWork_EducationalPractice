@@ -15,6 +15,7 @@ class EventCreateForm(ModelForm):
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Введите название события"}),
             "description": forms.Textarea(attrs={"class": "form-control", "placeholder": "Введите описание события"}),
+            "type": forms.Select(attrs={"class": "form-control", "placeholder": "Укажите тип"}),
             "priority": forms.Select(attrs={"class": "form-control", "placeholder": "Укажите приоритет"}),
             "start_time": DateInput(attrs={"type": "datetime-local", "class": "form-control"}, format="%Y-%m-%dT%H:%M"),
             "end_time": DateInput(attrs={"type": "datetime-local", "class": "form-control"}, format="%Y-%m-%dT%H:%M"),

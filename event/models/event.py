@@ -42,12 +42,21 @@ class Event(models.Model):
         (2, "Высокий"),
     )
 
+    TYPE = (
+        (0, "Тип не определен"),
+        (1, "Личное"),
+        (2, "Встреча"),
+        (3, "Тренинг"),
+        (4, "Конференция"),
+
+    )
+
     # Main Fields
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="events")
     title = models.CharField(max_length=200)
     description = models.TextField()
     location = models.CharField(max_length=100, default='Место не определено')
-    type = models.CharField(max_length=100, default='Тип не определен')
+    type = models.IntegerField(choices=TYPE, default='none')
     priority = models.IntegerField(choices=PRIORITIES, default='low')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()

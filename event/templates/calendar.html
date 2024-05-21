@@ -56,7 +56,17 @@
                             <p>{{ event.start_time|date:"d.m.Y H:m" }} - {{ event.end_time|date:"d.m.Y H:m" }}</p>
                             <p>
                                 <b>Локация:</b> {{ event.location }}<br>
-                                <b>Категория:</b> {{ event.type }}<br>
+                                {% if event.type == 0 %}
+                                <b>Категория:</b><b style="color: #ff7474"> Тип не определен</b><br>
+                                {% elif event.type == 1 %}
+                                <b>Категория:</b><b style="color: #86ff86"> Личное</b><br>
+                                {% elif event.type == 2 %}
+                                <b>Категория:</b><b style="color: #86ff86"> Встреча</b><br>
+                                {% elif event.type == 3 %}
+                                <b>Категория:</b><b style="color: #86ff86"> Тренинг</b><br>
+                                {% elif event.type == 4 %}
+                                <b>Категория:</b><b style="color: #86ff86"> Конференция</b><br>
+                                {% endif %}
                                 {% if event.priority == 0 %}
                                 <b>Приоритет:</b><b style="color: #86ff86"> Низкий</b>
                                 {% elif event.priority == 1 %}
@@ -139,19 +149,25 @@
                                 <span style="color: red; font-size: 20px" aria-hidden="true"><b>&times;</b></span>
                             </button>
                         </div>
-                        <div class="modal-body">
-                            <p id="event_time"></p>
-                            <p>
-                                <b>Локация:</b><q id="event_place"></q><br>
-                                <b>Категория:</b><q id="event_type"></q>
-                            </p>
-                            <p id="event_priority"></p>
-                            <p id="event_desc"></p>
-                        </div>
+                        <form method="post">
+                            <div class="modal-body">
+                                <p id="event_time"></p>
+                                <p>
+                                    <b>Локация:</b><q id="event_place"></q><br>
+                                    <b>Категория:</b><q id="event_type"></q>
+                                </p>
+                                <p id="event_priority"></p>
+                                <p id="event_desc"></p>
+                                <div class="modal-footer">
+                                    <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить</button>
+                                    <button id="modalNextWeek" data-event-id-week="" type="button" class="btn btn-success">Следующая неделя</button>
+                                    <button id="modalNextDay" data-event-id-day="" type="button" class="btn btn-primary">Следующий день</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -225,11 +241,31 @@
                 const type  = arg.event.extendedProps.type;
                 const prior = arg.event.extendedProps.priority;
                 const desc  = arg.event.extendedProps.description;
+                const id = arg.event.id;
+
+                const deleteBtn = document.getElementById("modalDelete");
+                const nextWeekBtn = document.getElementById("modalNextWeek");
+                const nextDayBtn = document.getElementById("modalNextDay");
 
                 modalTitle.textContent = title;
                 modalTime.textContent  = formatDateTime(start) + ' - ' + formatDateTime(end);
                 modalPlace.textContent = place;
-                modalType.textContent  = type;
+                if (type === 0) {
+                    modalType.textContent = "Тип не определен"
+                    modalType.style.color = "#006300"
+                } else if (type === 1) {
+                    modalType.textContent = "Личное"
+                    modalType.style.color = "#006300"
+                } else if (type === 2) {
+                    modalType.textContent = "Встреча"
+                    modalType.style.color = "#006300"
+                } else if (type === 3){
+                    modalType.textContent = "Тренинг"
+                    modalType.style.color = "#006300"
+                } else if (type === 4){
+                    modalType.textContent = "Конференция"
+                    modalType.style.color = "#006300"
+                }
                 if (prior === 0) {
                     modalPrior.textContent = "Низкий приоритет"
                     modalPrior.style.color = "#006300"
@@ -240,7 +276,61 @@
                     modalPrior.textContent = "Высокий приоритет"
                     modalPrior.style.color = "#b10000"
                 }
+                deleteBtn.setAttribute("data-event-id", id);
+                nextWeekBtn.setAttribute("data-event-id-week", id);
+                nextDayBtn.setAttribute("data-event-id-day", id);
+
                 modalDesc.textContent  = desc || '';
+
+                document.getElementById('modalDelete').addEventListener('click', function() {
+                    const eventId = this.getAttribute('data-event-id');
+                    if (confirm('Вы уверены, что хотите удалить это событие?')) {
+                        $.ajax({
+                            url: `/delete_event/${eventId}/`,
+                            type: 'POST',
+                            data: {
+                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                            },
+                            success: function(response) {
+                                alert(response.message);
+                                window.location.reload();
+                            },
+                        });
+                    }});
+
+                document.getElementById('modalNextWeek').addEventListener('click', function() {
+                    const eventId = this.getAttribute('data-event-id-week');
+                    if (confirm('Вы уверены, что хотите добавить это событие на следующую неделю?')) {
+                        $.ajax({
+                            url: `/next_week/${eventId}/`,
+                            type: 'POST',
+                            data: {
+                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                            },
+                            success: function(response) {
+                                alert(response.message);
+                                window.location.reload();
+                            },
+                        });
+                    }
+                });
+
+                document.getElementById('modalNextDay').addEventListener('click', function() {
+                    const eventId = this.getAttribute('data-event-id-day');
+                    if (confirm('Вы уверены, что хотите добавить это событие на следующий день?')) {
+                        $.ajax({
+                            url: `/next_day/${eventId}/`,
+                            type: 'POST',
+                            data: {
+                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                            },
+                            success: function(response) {
+                                alert(response.message);
+                                window.location.reload();
+                            },
+                        });
+                    }
+                });
 
                 modal.style.display = 'block';
             },
@@ -251,6 +341,9 @@
 
         calendar.render();
     });
+
+    // Delete event
+
 
     // Close buttons in EventCreate and EventView
     const closeBtn1 = document.getElementById('modalClose1');
@@ -268,5 +361,6 @@
         const eventModal = document.getElementById('event_modal');
         eventModal.style.display = 'none';
     });
+
 </script>
 {% endblock extra_scripts %}
