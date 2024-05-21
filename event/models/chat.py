@@ -23,7 +23,7 @@ class ChatMessage(models.Model):
     """ Chat message model """
 
     # Main Fields
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
     message = models.CharField(max_length=4000)
 
     # Static fields

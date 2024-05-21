@@ -1,7 +1,9 @@
+from django.utils.timezone import localtime, get_current_timezone
 from datetime import datetime
 from django.db import models
 
 from account.models import User
+from common.date import get_time_since
 
 
 class EventManager(models.Manager):
@@ -60,5 +62,8 @@ class Event(models.Model):
 
     objects = EventManager()
 
+    def comes_in(self):
+        return get_time_since(self.start_time.replace(tzinfo=get_current_timezone()) - localtime())
+    
     def __str__(self):
         return self.title
