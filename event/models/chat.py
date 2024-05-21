@@ -18,6 +18,7 @@ class ChatMessageManager(models.Manager):
     def get_recent_messages():
         return ChatMessage.objects.filter(is_deleted=False).order_by("start_time")[:10]
 
+
 class ChatMessage(models.Model):
     """ Chat message model """
 

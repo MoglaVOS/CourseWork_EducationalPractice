@@ -23,13 +23,13 @@ class EventManager(models.Manager):
         ).order_by("start_time")
 
     @staticmethod
-    def get_running_events(user):
-        """ Return running events for user """
+    def get_events_after_date(user, date: datetime.date):
+        """ Return events for user after date """
         return Event.objects.filter(
             user=user,
             is_active=True,
             is_deleted=False,
-            end_time__gte=datetime.now().date()
+            start_time__gte=date
         ).order_by("start_time")
 
 

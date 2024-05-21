@@ -42,13 +42,13 @@
 {% block content %}
 <div class="row">
 
-    <!-- Completed Events -->
+    <!-- Total Events -->
     <div class="col-md-6 col-lg-3">
         <div class="widget-small primary coloured-icon">
             <i class="icon fa fa-files-o fa-3x"></i>
             <div class="info">
-                <h4>Всего завершенных событий</h4>
-                <p><b>TOTAL_EVENT</b></p>
+                <h4>Всего записей</h4>
+                <p><b>{{ events.count }}</b></p>
             </div>
         </div>
     </div>
@@ -58,8 +58,8 @@
         <div class="widget-small info coloured-icon">
             <i class="icon fa fa-thumbs-o-up fa-3x"></i>
             <div class="info">
-                <h4>Всего идущих событий</h4>
-                <p><b>RUN_EVENTS.COUNT</b></p>
+                <h4>Идущих событий</h4>
+                <p><b>{{ current_events.count }}</b></p>
             </div>
         </div>
     </div>
@@ -69,8 +69,8 @@
         <div class="widget-small warning coloured-icon">
             <i class="icon fa fa-users fa-3x"></i>
             <div class="info">
-                <h4>Всего участников</h4>
-                <p><b>N/A</b></p>
+                <h4>Предстоящих событий</h4>
+                <p><b>{{ upcoming_events.count }}</b></p>
             </div>
         </div>
     </div>
@@ -80,8 +80,8 @@
         <div class="widget-small danger coloured-icon">
             <i class="icon fa fa-star fa-3x"></i>
             <div class="info">
-                <h4>Звезд</h4>
-                <p><b>500</b></p>
+                <h4>Участников календаря</h4>
+                <p><b>1</b></p>
             </div>
         </div>
     </div>
@@ -95,35 +95,22 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <table class="table table-hover table-bordered dataTable no-footer"
-                                       id="sampleTable" role="grid" aria-describedby="sampleTable_info">
+                                       id="table" role="grid" aria-describedby="sampleTable_info">
                                     <thead>
                                         <tr role="row">
-                                            <th class="sorting_asc" tabindex="0" aria-controls="sampleTable"
-                                                rowspan="1" colspan="1" aria-sort="ascending"
-                                                aria-label="Name: activate to sort column descending"
-                                                style="width: 262px;">SL
-                                            </th>
-                                            <th class="sorting" tabindex="0" aria-controls="sampleTable" rowspan="1"
-                                                colspan="1" aria-label="Position: activate to sort column ascending"
-                                                style="width: 417px;">Название события
-                                            </th>
-                                            <th class="sorting" tabindex="0" aria-controls="sampleTable" rowspan="1"
-                                                colspan="1" aria-label="Office: activate to sort column ascending"
-                                                style="width: 189px;">Начало
-                                            </th>
-                                            <th class="sorting" tabindex="0" aria-controls="sampleTable" rowspan="1"
-                                                colspan="1" aria-label="Age: activate to sort column ascending"
-                                                style="width: 102px;">Конец
-                                            </th>
+                                            <th class="sorting" style="width: 25px;">Название события</th>
+                                            <th class="sorting" style="width: 200px;">Описание</th>
+                                            <th class="sorting" style="width: 50px;">Начало</th>
+                                            <th class="sorting" style="width: 50px;">Конец</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for event in latest_events %}
+                                    {% for event in events %}
                                         <tr role="row" class="odd">
-                                            <td class="sorting_1">{{ forloop.counter }}</td>
-                                            <td>{{ event.title }}</td>
-                                            <td>{{ event.start_time }}</td>
-                                            <td>{{ event.end_time }}</td>
+                                            <td><a href="/calendar">{{ event.title }}</a></td>
+                                            <td>{{ event.description }}</td>
+                                            <td>{{ event.start_time|date:"d.m.Y H:m" }}</td>
+                                            <td>{{ event.end_time|date:"d.m.Y H:m" }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -141,5 +128,5 @@
 {% block extra_scripts %}
 <script type="text/javascript" src="{% static 'js/plugins/jquery.dataTables.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/plugins/dataTables.bootstrap.min.js' %}"></script>
-<script type="text/javascript">$('#sampleTable').DataTable();</script>
+<script type="text/javascript">$('#table').DataTable()</script>
 {% endblock extra_scripts %}

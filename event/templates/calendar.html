@@ -246,12 +246,7 @@
             },
 
             // Render all the events from CalendarView
-            events:
-                {% if events %}
-                {{ events|safe }}
-                {% else %}
-                []
-                {% endif %}
+            events: {% if events %}{{ events|safe }}{% else %}[{}]{% endif %}
         });
 
         calendar.render();
