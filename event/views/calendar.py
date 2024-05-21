@@ -69,11 +69,11 @@ def next_week(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
     if request.method == 'POST':
-        next = event
-        next.id = None
-        next.start_time += timedelta(days=7)
-        next.end_time += timedelta(days=7)
-        next.save()
+        next_event = event
+        next_event.id = None
+        next_event.start_time += timedelta(days=7)
+        next_event.end_time += timedelta(days=7)
+        next_event.save()
         return JsonResponse({'message': 'Success!'})
     else:
         return JsonResponse({'message': 'Error!'}, status=400)
@@ -82,11 +82,11 @@ def next_week(request, event_id):
 def next_day(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     if request.method == 'POST':
-        next = event
-        next.id = None
-        next.start_time += timedelta(days=1)
-        next.end_time += timedelta(days=1)
-        next.save()
+        next_event = event
+        next_event.id = None
+        next_event.start_time += timedelta(days=1)
+        next_event.end_time += timedelta(days=1)
+        next_event.save()
         return JsonResponse({'message': 'Sucess!'})
     else:
         return JsonResponse({'message': 'Error!'}, status=400)

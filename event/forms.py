@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import DateInput, ModelForm
 
-from account.models.user import User
 from event.models import Event
 from event.models.chat import ChatMessage
 
@@ -34,6 +33,7 @@ class EventCreateForm(ModelForm):
         if commit:
             event.save()
         return event
+
 
 class ChatForm(forms.ModelForm):
     """ Send message Form"""

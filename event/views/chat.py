@@ -29,7 +29,7 @@ class ChatView(View):
 
     def post(self, request, *args, **kwargs):
         # Create form
-        form = ChatForm(request.POST, user=request.user)
+        form = self.form_class(request.POST, user=request.user)
         if form.is_valid():
             msg = form.save(commit=False)
             msg.user = request.user

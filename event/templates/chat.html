@@ -48,7 +48,7 @@
                 <div class="messages" style="max-height: 500px">
                     {% for query in messages %}
                     <div class="message {% if query.user == request.user %}me{% endif %}">
-                        <img src="{% static 'images/avatar.jpg' %}" width="32" height="32">
+                        <img src="{% static 'images/avatar.jpg' %}" alt="avatar" width="32" height="32">
                         <p class="info">
                             <b>{{query.user.second_name}} {{query.user.first_name}}</b><br>
                             <span>{{query.message}}</span>

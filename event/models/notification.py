@@ -1,4 +1,4 @@
-from django.utils.timezone import now, localtime
+from django.utils.timezone import localtime
 from datetime import datetime, timedelta
 from django.db import models
 
@@ -14,12 +14,12 @@ class NotificationManager(models.Manager):
     def get_all_notifications(user):
         """ Return all notifications for user """
         return Notification.objects.filter(user=user, is_deleted=False)
-    
+
     @staticmethod
     def get_unread_notifications(user):
         """ Return all unread notifications for user """
         return Notification.objects.filter(user=user, is_read=False, is_deleted=False)
-    
+
     @staticmethod
     def get_upcoming_notifications(user, time: timedelta):
         """ Return or make all notifications for user about events
@@ -46,8 +46,9 @@ class NotificationManager(models.Manager):
                 notif = notifs[0]
                 if not notif.is_read:
                     notifications.append(notif)
-                
+
         return notifications
+
 
 class Notification(models.Model):
     """ Notification model """
@@ -70,6 +71,6 @@ class Notification(models.Model):
         dt = localtime() - self.created_at
         if dt.seconds == 0: return "только что"
         return get_time_since(dt) + " назад"
-    
+
     def __str__(self):
         return self.title

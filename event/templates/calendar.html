@@ -289,7 +289,7 @@
                             url: `/delete_event/${eventId}/`,
                             type: 'POST',
                             data: {
-                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                                csrf_middleware_token: '{{ csrf_token }}',
                             },
                             success: function(response) {
                                 alert(response.message);
@@ -305,7 +305,7 @@
                             url: `/next_week/${eventId}/`,
                             type: 'POST',
                             data: {
-                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                                csrf_middleware_token: '{{ csrf_token }}',
                             },
                             success: function(response) {
                                 alert(response.message);
@@ -322,7 +322,7 @@
                             url: `/next_day/${eventId}/`,
                             type: 'POST',
                             data: {
-                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                                csrf_middleware_token: '{{ csrf_token }}',
                             },
                             success: function(response) {
                                 alert(response.message);

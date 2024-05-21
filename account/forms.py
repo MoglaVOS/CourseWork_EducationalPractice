@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 
-from account.models.user import User
+from account.models import User
+from account.models import Invite
 
 
 class SignInForm(forms.Form):
@@ -128,3 +129,48 @@ class ChangePasswordForm(forms.ModelForm):
         if commit:
             self.user.save()
         return self.user
+
+
+class UserInviteForm(forms.ModelForm):
+    """ User calendar invitation form """
+
+    class Meta:
+        model = Invite
+        fields = ["invitee_email"]
+        widgets = {
+            "invitee_email": forms.EmailInput(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.inviter = kwargs.pop('inviter', None)
+        super(UserInviteForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        """ Check if invitee exists. Return cleaned_data """
+        cleaned_data = super().clean()
+        invitee_email = cleaned_data.get("invitee_email")
+
+        # Handle Invitee Does Not Exist Error
+        try:
+            User.objects.get(email=invitee_email)
+        except User.DoesNotExist:
+            self.add_error("invitee_email", "Пользователя с такой почтой не существует")
+            raise ValidationError("User Does Not Exist")
+
+        # Handle Inviter == Invitee Error
+        if self.inviter and self.inviter.email == invitee_email:
+            self.add_error("invitee_email", "Нельзя отправить приглашение самому себе")
+            raise ValidationError("Invitee shouldn't be equal to inviter")
+
+        # Handle Not Unique Inviter-Invitee pair Error
+        if Invite.objects.filter(inviter=self.inviter, invitee_email=invitee_email).exists():
+            self.add_error("invitee_email", "Приглашение уже было отправлено")
+            raise ValidationError("Invite already sent")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        invite = super().save(commit=False)
+        if commit:
+            invite.save()
+        return invite
