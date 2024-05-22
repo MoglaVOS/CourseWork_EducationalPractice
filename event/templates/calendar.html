@@ -42,6 +42,62 @@
 {% endblock sidebar %}
 
 {% block content %}
+
+<!-- Navigation Tabs between calendars -->
+<nav class="nav nav-pills nav-justified">
+    <!-- Account owner tab -->
+    {% if owner.id == user.id %}
+        <a class="nav-item nav-link bg-primary text-white" href="#">
+            Мой календарь
+        </a>
+    {% else %}
+        <a class="nav-item nav-link bg-white" href="{% url 'event:calendar' %}">
+            Мой календарь
+        </a>
+    {% endif %}
+
+    <!-- 4 others` tabs -->
+    {% for invite in invites %}
+        {% if forloop.counter < 4 %}
+            {% if invite.inviter.id == owner.id %}
+                <a class="nav-item nav-link bg-primary text-white">{{ invite.inviter.email }}</a>
+            {% else %}
+                <a class="nav-item nav-link bg-white" href="javascript:void(0);" onclick="goToCalWithInvId({{ invite.inviter.id }})">
+                    {{ invite.inviter.email }}
+                </a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- Dropdown menu for more than 4 others -->
+    {% if invites.count >= 4 %}
+        {% if is_owner_in_overflow %}
+            <a class="nav-item nav-link dropdown-toggle bg-primary text-white" data-toggle="dropdown"
+               role="button" aria-haspopup="true" aria-expanded="false">
+                Ещё
+            </a>
+        {% else %}
+            <a class="nav-item nav-link dropdown-toggle bg-white" data-toggle="dropdown"
+               role="button" aria-haspopup="true" aria-expanded="false">
+                Ещё
+            </a>
+        {% endif %}
+        <div class="dropdown-menu">
+            {% for invite in invites %}
+                {% if forloop.counter >= 4 %}
+                    {% if invite.inviter.id == owner.id %}
+                        <a class="dropdown-item bg-primary text-white">{{ invite.inviter.email }}</a>
+                    {% else %}
+                        <a class="dropdown-item" href="javascript:void(0);" onclick="goToCalWithInvId({{ invite.inviter.id }})">
+                            {{ invite.inviter.email }}
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</nav>
+
 <div class="row">
     <div class="col-md-12">
         <div class="tile row">
@@ -85,7 +141,7 @@
 
             <!-- JS Calendar loader -->
             <div class="col-md-9">
-                <div id="calendar"></div>
+                <div id="calendar" data-cal-id="{{ user.id }}"></div>
             </div>
 
             <!-- Event Create Form -->
@@ -170,6 +226,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -178,225 +235,219 @@
 {% block extra_scripts %}
 <script src="{% static 'js/fullcalendar.js' %}"></script>
 <script>
-    function converterDataParaDjangoFormat(data) {
-        const dataJS = new Date(data);
-        const year = dataJS.getFullYear();
-        const month = (dataJS.getMonth() + 1).toString().padStart(2, '0');
-        const day = dataJS.getDate().toString().padStart(2, '0');
-        const hour = dataJS.getHours().toString().padStart(2, '0');
-        const minute = dataJS.getMinutes().toString().padStart(2, '0');
-        const second = dataJS.getSeconds().toString().padStart(2, '0');
-        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-    }
+// Format a calendar.date object to Django style
+function formatJSDate(date) {
+    const dataJS = new Date(date);
+    const year = dataJS.getFullYear();
+    const month = (dataJS.getMonth() + 1).toString().padStart(2, '0');
+    const day = dataJS.getDate().toString().padStart(2, '0');
+    const hour = dataJS.getHours().toString().padStart(2, '0');
+    const minute = dataJS.getMinutes().toString().padStart(2, '0');
+    const second = dataJS.getSeconds().toString().padStart(2, '0');
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
 
-    // Format a Date Object to Text
-    function formatDateTime(dateTime) {
-        const options = {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        };
-        return new Date(dateTime).toLocaleDateString('ru-RU', options);
-    }
+// Format a Date Object to Text
+function formatDateTime(dateTime) {
+    const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    };
+    return new Date(dateTime).toLocaleDateString('ru-RU', options);
+}
 
-    // Create and render calendar on DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function () {
-        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialDate: new Date(), // Set current date as initial
-            locale: 'ru',            // Calendar language
-            navLinks: true,          // Clickable Dates transferring to the timeGridDay
+// Create and render calendar on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function () {
+    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialDate: new Date(), // Set current date as initial
+        locale: 'ru',            // Calendar language
+        navLinks: true,          // Clickable Dates transferring to the timeGridDay
 
-            // Buttons in header (Prev/Next Today   Current Date    MonthView WeekView DayView)
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth timeGridWeek timeGridDay'
-            },
+        // Buttons in header (Prev/Next Today   Current Date    MonthView WeekView DayView)
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth timeGridWeek timeGridDay'
+        },
 
-            // Ability to select several days in the calendar at once (to create an event)
-            selectable: true,
-            selectMirror: true,
-            select: function (arg) {
-                const modal = document.getElementById('eventModal')
-                modal.style.display = 'block'
-                document.getElementById('id_start_time').value = converterDataParaDjangoFormat(arg.start);
-                document.getElementById('id_end_time').value = converterDataParaDjangoFormat(arg.end);
-                calendar.unselect()
-            },
+        // Ability to select several days in the calendar at once (to create an event)
+        selectable: true,
+        selectMirror: true,
+        select: function (arg) {
+            const modal = document.getElementById('eventModal')
+            modal.style.display = 'block'
+            document.getElementById('id_start_time').value = formatJSDate(arg.start);
+            document.getElementById('id_end_time').value = formatJSDate(arg.end);
+            calendar.unselect()
+        },
 
-            // On event click:
-            eventClick: function (arg) {
-                const modal      = document.getElementById('event_modal');
-                const modalTitle = document.getElementById('event_title');
-                const modalTime  = document.getElementById('event_time');
-                const modalPlace = document.getElementById('event_place');
-                const modalType  = document.getElementById('event_type');
-                const modalPrior = document.getElementById('event_priority');
-                const modalDesc  = document.getElementById('event_desc');
+        // On event click:
+        eventClick: function (arg) {
+            const modal      = document.getElementById('event_modal');
+            const modalTitle = document.getElementById('event_title');
+            const modalTime  = document.getElementById('event_time');
+            const modalPlace = document.getElementById('event_place');
+            const modalType  = document.getElementById('event_type');
+            const modalPrior = document.getElementById('event_priority');
+            const modalDesc  = document.getElementById('event_desc');
 
-                const title = arg.event.title;
-                const start = arg.event.start;
-                const end   = arg.event.end;
-                const place = arg.event.extendedProps.location;
-                const type  = arg.event.extendedProps.type;
-                const prior = arg.event.extendedProps.priority;
-                const desc  = arg.event.extendedProps.description;
-                const id = arg.event.id;
+            const title = arg.event.title;
+            const start = arg.event.start;
+            const end   = arg.event.end;
+            const place = arg.event.extendedProps.location;
+            const type  = arg.event.extendedProps.type;
+            const prior = arg.event.extendedProps.priority;
+            const desc  = arg.event.extendedProps.description;
+            const id = arg.event.id;
 
-                const editBtn = document.getElementById("modalEdit");
-                const deleteBtn = document.getElementById("modalDelete");
-                {#const nextDate = document.getElementById("modalAllDay")#}
-                {#const nextWeekBtn = document.getElementById("modalNextWeek");#}
-                {#const nextDayBtn = document.getElementById("modalNextDay");#}
+            const deleteBtn = document.getElementById("modalDelete");
+            {#const nextDate = document.getElementById("modalAllDay")#}
+            {#const nextWeekBtn = document.getElementById("modalNextWeek");#}
+            {#const nextDayBtn = document.getElementById("modalNextDay");#}
 
 
-                modalTitle.textContent = title;
-                modalTime.textContent  = formatDateTime(start) + ' - ' + formatDateTime(end);
-                modalPlace.textContent = place;
-                if (type === 0) {
-                    modalType.textContent = "Тип не определен"
-                    modalType.style.color = "#006300"
-                } else if (type === 1) {
-                    modalType.textContent = "Личное"
-                    modalType.style.color = "#006300"
-                } else if (type === 2) {
-                    modalType.textContent = "Встреча"
-                    modalType.style.color = "#006300"
-                } else if (type === 3){
-                    modalType.textContent = "Тренинг"
-                    modalType.style.color = "#006300"
-                } else if (type === 4){
-                    modalType.textContent = "Конференция"
-                    modalType.style.color = "#006300"
-                }
-                if (prior === 0) {
-                    modalPrior.textContent = "Низкий приоритет"
-                    modalPrior.style.color = "#006300"
-                } else if (prior === 1) {
-                    modalPrior.textContent = "Средний приоритет"
-                    modalPrior.style.color = "#a89900"
-                } else if (prior === 2) {
-                    modalPrior.textContent = "Высокий приоритет"
-                    modalPrior.style.color = "#b10000"
-                }
+            modalTitle.textContent = title;
+            modalTime.textContent  = formatDateTime(start) + ' - ' + formatDateTime(end);
+            modalPlace.textContent = place;
+            if (type === 0) {
+                modalType.textContent = "Тип не определен"
+                modalType.style.color = "#006300"
+            } else if (type === 1) {
+                modalType.textContent = "Личное"
+                modalType.style.color = "#006300"
+            } else if (type === 2) {
+                modalType.textContent = "Встреча"
+                modalType.style.color = "#006300"
+            } else if (type === 3){
+                modalType.textContent = "Тренинг"
+                modalType.style.color = "#006300"
+            } else if (type === 4){
+                modalType.textContent = "Конференция"
+                modalType.style.color = "#006300"
+            }
+            if (prior === 0) {
+                modalPrior.textContent = "Низкий приоритет"
+                modalPrior.style.color = "#006300"
+            } else if (prior === 1) {
+                modalPrior.textContent = "Средний приоритет"
+                modalPrior.style.color = "#a89900"
+            } else if (prior === 2) {
+                modalPrior.textContent = "Высокий приоритет"
+                modalPrior.style.color = "#b10000"
+            }
 
-                editBtn.setAttribute("data-event-id", id);
-                deleteBtn.setAttribute("data-event-id", id);
-                {#nextDate.setAttribute("data-event-id-all", id);#}
-                {#nextWeekBtn.setAttribute("data-event-id-week", id);#}
-                {#nextDayBtn.setAttribute("data-event-id-day", id);#}
+            deleteBtn.setAttribute("data-event-id", id);
+            {#nextDate.setAttribute("data-event-id-all", id);#}
+            {#nextWeekBtn.setAttribute("data-event-id-week", id);#}
+            {#nextDayBtn.setAttribute("data-event-id-day", id);#}
 
-                modalDesc.textContent  = desc || '';
+            modalDesc.textContent  = desc || '';
 
-                editBtn.addEventListener('click', function() {
-                    const eventId = this.getAttribute('data-event-id');
-                    window.location = `/event_change/${eventId}`
-                });
+            document.getElementById('modalDelete').addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                if (confirm('Вы уверены, что хотите удалить это событие?')) {
+                    $.ajax({
+                        url: `/delete_event/${eventId}/`,
+                        type: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                        },
+                        success: function(response) {
+                            alert(response.message);
+                            window.location.reload();
+                        },
+                    });
+                }});
 
-                deleteBtn.addEventListener('click', function() {
-                    const eventId = this.getAttribute('data-event-id');
-                    if (confirm('Вы уверены, что хотите удалить это событие?')) {
-                        $.ajax({
-                            url: `/delete_event/${eventId}/`,
-                            type: 'POST',
-                            data: {
-                                csrfmiddlewaretoken: '{{ csrf_token }}',
-                            },
-                            success: function(response) {
-                                alert(response.message);
-                                window.location.reload();
-                            },
-                        });
-                    }
-                });
+            {#document.getElementById('modalNextWeek').addEventListener('click', function() {#}
+            {#    const eventId = this.getAttribute('data-event-id-week');#}
+            {#    if (confirm('Вы уверены, что хотите добавить это событие на следующую неделю?')) {#}
+            {#        $.ajax({#}
+            {#            url: `/next_week/${eventId}/`,#}
+            {#            type: 'POST',#}
+            {#            data: {#}
+            {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
+            {#            },#}
+            {#            success: function(response) {#}
+            {#                alert(response.message);#}
+            {#                window.location.reload();#}
+            {#            },#}
+            {#        });#}
+            {#    }#}
+            {# }); #}
+            {##}
+            {#document.getElementById('modalNextDay').addEventListener('click', function() {#}
+            {#    const eventId = this.getAttribute('data-event-id-day');#}
+            {#    if (confirm('Вы уверены, что хотите добавить это событие на следующий день?')) {#}
+            {#        $.ajax({#}
+            {#            url: `/next_day/${eventId}/`,#}
+            {#            type: 'POST',#}
+            {#            data: {#}
+            {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
+            {#            },#}
+            {#            success: function(response) {#}
+            {#                alert(response.message);#}
+            {#                window.location.reload();#}
+            {#            },#}
+            {#        });#}
+            {#    }#}
+            {# });#}
 
-                {#document.getElementById('modalNextWeek').addEventListener('click', function() {#}
-                {#    const eventId = this.getAttribute('data-event-id-week');#}
-                {#    if (confirm('Вы уверены, что хотите добавить это событие на следующую неделю?')) {#}
-                {#        $.ajax({#}
-                {#            url: `/next_week/${eventId}/`,#}
-                {#            type: 'POST',#}
-                {#            data: {#}
-                {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
-                {#            },#}
-                {#            success: function(response) {#}
-                {#                alert(response.message);#}
-                {#                window.location.reload();#}
-                {#            },#}
-                {#        });#}
-                {#    }#}
-                {# }); #}
-                {##}
-                {#document.getElementById('modalNextDay').addEventListener('click', function() {#}
-                {#    const eventId = this.getAttribute('data-event-id-day');#}
-                {#    if (confirm('Вы уверены, что хотите добавить это событие на следующий день?')) {#}
-                {#        $.ajax({#}
-                {#            url: `/next_day/${eventId}/`,#}
-                {#            type: 'POST',#}
-                {#            data: {#}
-                {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
-                {#            },#}
-                {#            success: function(response) {#}
-                {#                alert(response.message);#}
-                {#                window.location.reload();#}
-                {#            },#}
-                {#        });#}
-                {#    }#}
-                {# });#}
+            {#document.addEventListener('DOMContentLoaded', function() {#}
+            {#    const form = document.querySelector('data-event-id-all');#}
+            {#    form.addEventListener('submit', function(event) {#}
+            {#        event.preventDefault();#}
+            {#        const formData = new FormData(form);#}
+            {#        fetch(form.action, {#}
+            {#            method: 'POST',#}
+            {#            url: `/next_date/${eventId}/`,#}
+            {#            body: formData#}
+            {#        })#}
+            {#            .then(response => response.json())#}
+            {#            .then(data => {#}
+            {#                // Обработка ответа от сервера#}
+            {#                console.log(data);#}
+            {#            })#}
+            {#            .catch(error => {#}
+            {#                // Обработка ошибки#}
+            {#                console.error(error);#}
+            {#            });#}
+            {#    });#}
+            {# }); #}
 
-                {#document.addEventListener('DOMContentLoaded', function() {#}
-                {#    const form = document.querySelector('data-event-id-all');#}
-                {#    form.addEventListener('submit', function(event) {#}
-                {#        event.preventDefault();#}
-                {#        const formData = new FormData(form);#}
-                {#        fetch(form.action, {#}
-                {#            method: 'POST',#}
-                {#            url: `/next_date/${eventId}/`,#}
-                {#            body: formData#}
-                {#        })#}
-                {#            .then(response => response.json())#}
-                {#            .then(data => {#}
-                {#                // Обработка ответа от сервера#}
-                {#                console.log(data);#}
-                {#            })#}
-                {#            .catch(error => {#}
-                {#                // Обработка ошибки#}
-                {#                console.error(error);#}
-                {#            });#}
-                {#    });#}
-                {# }); #}
+            modal.style.display = 'block';
+        },
 
-                modal.style.display = 'block';
-            },
-
-            // Render all the events from CalendarView
-            events: {% if events %}{{ events|safe }}{% else %}[{}]{% endif %}
-        });
-
-        calendar.render();
+        // Render all the events from CalendarView
+        events: {% if events %}{{ events|safe }}{% else %}[{}]{% endif %}
     });
 
-    // Delete event
+    calendar.render();
+});
 
+// Close buttons in EventCreate and EventView
+const closeBtn1 = document.getElementById('modalClose1');
+const closeBtn2 = document.getElementById('modalClose2');
+const closeBtn3 = document.getElementById('modalDetailClose');
+closeBtn1.addEventListener('click', () => {
+    const eventModal = document.getElementById('eventModal');
+    eventModal.style.display = 'none';
+});
+closeBtn2.addEventListener('click', () => {
+    const eventModal = document.getElementById('eventModal');
+    eventModal.style.display = 'none';
+});
+closeBtn3.addEventListener('click', () => {
+    const eventModal = document.getElementById('event_modal');
+    eventModal.style.display = 'none';
+});
 
-    // Close buttons in EventCreate and EventView
-    const closeBtn1 = document.getElementById('modalClose1');
-    const closeBtn2 = document.getElementById('modalClose2');
-    const closeBtn3 = document.getElementById('modalDetailClose');
-    closeBtn1.addEventListener('click', () => {
-        const eventModal = document.getElementById('eventModal');
-        eventModal.style.display = 'none';
-    });
-    closeBtn2.addEventListener('click', () => {
-        const eventModal = document.getElementById('eventModal');
-        eventModal.style.display = 'none';
-    });
-    closeBtn3.addEventListener('click', () => {
-        const eventModal = document.getElementById('event_modal');
-        eventModal.style.display = 'none';
-    });
-
+// Tabs
+function goToCalWithInvId(inviterId) {
+    window.location.href = "{% url 'event:calendar' %}?inviter_id=" + inviterId;
+}
 </script>
 {% endblock extra_scripts %}
