@@ -1,4 +1,6 @@
 from datetime import timedelta
+
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import View
@@ -23,7 +25,7 @@ class ChatView(LoginRequiredMixin, View):
         ev_id = request.GET.get("event")
         try:
             ev = get_object_or_404(Event, id=ev_id)
-        except Exception:
+        except Http404:
             ev = None
         
         notifications = Notification.objects.get_all_notifications(user=request.user, time=timedelta(days=2))
@@ -46,7 +48,7 @@ class ChatView(LoginRequiredMixin, View):
                 msg.event = Event.objects.get(id=request.POST.get('event_id'))
                 msg.save()
                 return redirect(reverse("event:chat") + f"?event={msg.event.id}")
-            except Exception:
+            except Event.DoesNotExist:
                 msg.event = None
                 msg.save()
                 return redirect("event:chat")

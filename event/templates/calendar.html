@@ -213,12 +213,16 @@
                                     <b>Локация:</b><q id="event_place"></q><br>
                                     <b>Категория:</b><q id="event_type"></q>
                                 </p>
-                                <p id="event_priority"></p>
+                                <b id="event_priority"></b>
                                 <p id="event_desc"></p>
-                                <div class="modal-body">
-                                    <button id="modalChat" data-event-id="" type="button" class="btn btn-info">Чат события</button>
-                                    <button id="modalEdit" data-event-id="" type="button" class="btn btn-success">Изменить событие</button>
-                                    <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить событие</button>
+                                <div class="modal-body" style="display: flex; justify-content: space-between">
+                                    <div class="text-left">
+                                        <button id="modalChat" data-event-id="" type="button" class="btn btn-info">Чат</button>
+                                    </div>
+                                    <div class="text-right">
+                                        <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить</button>
+                                        <button id="modalEdit" data-event-id="" type="button" class="btn btn-success">Изменить</button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -302,12 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const desc  = arg.event.extendedProps.description;
             const id = arg.event.id;
 
-                const chatBtn = document.getElementById("modalChat");
-                const editBtn = document.getElementById("modalEdit");
-                const deleteBtn = document.getElementById("modalDelete");
-                {#const nextDate = document.getElementById("modalAllDay")#}
-                {#const nextWeekBtn = document.getElementById("modalNextWeek");#}
-                {#const nextDayBtn = document.getElementById("modalNextDay");#}
+            const chatBtn = document.getElementById("modalChat");
+            const editBtn = document.getElementById("modalEdit");
+            const deleteBtn = document.getElementById("modalDelete");
+            {#const nextDate = document.getElementById("modalAllDay")#}
+            {#const nextWeekBtn = document.getElementById("modalNextWeek");#}
+            {#const nextDayBtn = document.getElementById("modalNextDay");#}
 
 
             modalTitle.textContent = title;
@@ -340,40 +344,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 modalPrior.style.color = "#b10000"
             }
 
-                chatBtn.setAttribute("data-event-id", id);
-                editBtn.setAttribute("data-event-id", id);
-                deleteBtn.setAttribute("data-event-id", id);
-                {#nextDate.setAttribute("data-event-id-all", id);#}
-                {#nextWeekBtn.setAttribute("data-event-id-week", id);#}
-                {#nextDayBtn.setAttribute("data-event-id-day", id);#}
+            chatBtn.setAttribute("data-event-id", id);
+            editBtn.setAttribute("data-event-id", id);
+            deleteBtn.setAttribute("data-event-id", id);
+            {#nextDate.setAttribute("data-event-id-all", id);#}
+            {#nextWeekBtn.setAttribute("data-event-id-week", id);#}
+            {#nextDayBtn.setAttribute("data-event-id-day", id);#}
 
-                modalDesc.textContent  = desc || '';
+            modalDesc.textContent  = desc || '';
 
-                chatBtn.addEventListener('click', function() {
-                    const eventId = this.getAttribute('data-event-id');
-                    window.location = `/chat/?event=${eventId}`
-                });
+            chatBtn.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                window.location = `/chat/?event=${eventId}`
+            });
 
-                editBtn.addEventListener('click', function() {
-                    const eventId = this.getAttribute('data-event-id');
-                    window.location = `/event_change/${eventId}`
-                });
+            editBtn.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                window.location = `/event_change/${eventId}`
+            });
 
-                deleteBtn.addEventListener('click', function() {
-                    const eventId = this.getAttribute('data-event-id');
+            deleteBtn.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
 
-                        $.ajax({
-                            url: `/delete_event/${eventId}/`,
-                            type: 'POST',
-                            data: {
-                                csrfmiddlewaretoken: '{{ csrf_token }}',
-                            },
-                            success: function() {
-                                window.location.reload();
-                            },
-                        });
+                    $.ajax({
+                        url: `/delete_event/${eventId}/`,
+                        type: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                        },
+                        success: function() {
+                            window.location.reload();
+                        },
+                    });
 
-                });
+            });
 
             {#document.getElementById('modalNextWeek').addEventListener('click', function() {#}
             {#    const eventId = this.getAttribute('data-event-id-week');#}
