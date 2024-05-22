@@ -83,12 +83,14 @@ class EventChangeView(LoginRequiredMixin, View):
         context = {"form": form}
         return render(request, self.template_name, context)
 
-def notif_read(request, notif_id):
-    notif = get_object_or_404(Notification, id=notif_id)
-    
+def notif_read(request):
     if request.method == 'POST':
+        notif_id = request.POST.get('notif_id')
+        notif = get_object_or_404(Notification, id=notif_id)
+        
         if request.user != notif.user:
             return JsonResponse({'message': 'Forbidden.'}, status=403)
+        
         notif.is_read = True
         notif.save()
         return JsonResponse({'message': 'Complete.'})

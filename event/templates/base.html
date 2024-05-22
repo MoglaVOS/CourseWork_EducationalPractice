@@ -110,9 +110,10 @@
                 const notif_id = e.currentTarget.getAttribute('notif-id');
                 const next_page = e.currentTarget.getAttribute('notif-goto');
                 $.ajax({
-                    url: `/notif_read/${notif_id}/`,
+                    url: '{% url 'event:notif_read' %}',
                     type: 'POST',
                     data: {
+                        "notif_id": notif_id,
                         csrfmiddlewaretoken: '{{ csrf_token }}',
                     },
                     success: function(resp) {
