@@ -17,7 +17,7 @@ class ChatView(View):
         # Show form
         form = self.form_class(user=request.user)
         
-        notifications = Notification.objects.get_upcoming_notifications(user=request.user, dt=timedelta(days=2))
+        notifications = Notification.objects.get_upcoming_notifications(user=request.user, time=timedelta(days=2))
         
         context = {
             "message_count": ChatMessage.objects.get_message_count(),
