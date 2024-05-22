@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.views.generic import View, TemplateView
+from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import datetime, timedelta
 from django.http import JsonResponse

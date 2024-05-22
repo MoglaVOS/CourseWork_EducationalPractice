@@ -27,7 +27,11 @@
 {% block breadcrumb %}
 <div>
     <h1><i class="app-menu__icon fa fa-comment"></i> Чат</h1>
+    {% if event %}
+    <p>Обсуждение события "{{ event.title }}"</p>
+    {% else %}
     <p>Общий чат</p>
+    {% endif %}
 </div>
 <ul class="app-breadcrumb breadcrumb">
     <li class="breadcrumb-item">
@@ -43,7 +47,11 @@
 <div class="row">
     <div class="col-md-12">
         <div class="tile">
+            {% if event %}
+            <h3 class="tile-title">Обсуждение события "{{ event.title }}"</h3>
+            {% else %}
             <h3 class="tile-title">Общий чат</h3>
+            {% endif %}
             <div class="messanger">
                 <div class="messages" style="max-height: 500px">
                     {% for query in messages %}
@@ -58,6 +66,9 @@
                 </div>
                 <form method="post">
                     {% csrf_token %}
+                    {% if event %}
+                    <input type="hidden" name="event_id" value="{{ event.id }}">
+                    {% endif %}
                     <div class="sender">
                         {{ form.message }}
                         <button class="btn btn-primary" type="submit"><i class="fa fa-paper-plane"></i></button>
@@ -68,9 +79,3 @@
     </div>
 </div>
 {% endblock content %}
-
-{% block extra_scripts %}
-<script type="text/javascript" src="{% static 'js/plugins/jquery.dataTables.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/plugins/dataTables.bootstrap.min.js' %}"></script>
-<script type="text/javascript">$('#sampleTable').DataTable();</script>
-{% endblock extra_scripts %}

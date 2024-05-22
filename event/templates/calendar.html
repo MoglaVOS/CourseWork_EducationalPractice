@@ -160,10 +160,9 @@
                                 <p id="event_priority"></p>
                                 <p id="event_desc"></p>
                                 <div class="modal-body">
-                                    <b>Изменить событие?</b><br>
-                                    <button id="modalEdit" data-event-id="" type="button" class="btn btn-success">Изменить</button>
-                                    <br><b>Удалить событие</b><br>
-                                    <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить</button>
+                                    <button id="modalChat" data-event-id="" type="button" class="btn btn-info">Чат события</button>
+                                    <button id="modalEdit" data-event-id="" type="button" class="btn btn-success">Изменить событие</button>
+                                    <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить событие</button>
                                 </div>
                             </div>
                         </form>
@@ -245,6 +244,7 @@
                 const desc  = arg.event.extendedProps.description;
                 const id = arg.event.id;
 
+                const chatBtn = document.getElementById("modalChat");
                 const editBtn = document.getElementById("modalEdit");
                 const deleteBtn = document.getElementById("modalDelete");
                 {#const nextDate = document.getElementById("modalAllDay")#}
@@ -282,6 +282,7 @@
                     modalPrior.style.color = "#b10000"
                 }
 
+                chatBtn.setAttribute("data-event-id", id);
                 editBtn.setAttribute("data-event-id", id);
                 deleteBtn.setAttribute("data-event-id", id);
                 {#nextDate.setAttribute("data-event-id-all", id);#}
@@ -289,6 +290,11 @@
                 {#nextDayBtn.setAttribute("data-event-id-day", id);#}
 
                 modalDesc.textContent  = desc || '';
+                
+                chatBtn.addEventListener('click', function() {
+                    const eventId = this.getAttribute('data-event-id');
+                    window.location = `/chat/?event=${eventId}`
+                });
 
                 editBtn.addEventListener('click', function() {
                     const eventId = this.getAttribute('data-event-id');
