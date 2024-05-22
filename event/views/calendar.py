@@ -33,6 +33,7 @@ class CalendarView(LoginRequiredMixin, View):
                 owner = request.user
         else:
             owner = request.user
+        request.session["owner_id"] = owner.id  # Save owner_id for POST method
 
         form = self.form_class()  # Create event form
         notifications = Notification.objects.get_all_notifications(user=request.user, time=timedelta(days=2))
@@ -66,12 +67,21 @@ class CalendarView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request):
+        # Get owner from session or user
+        owner_id = request.session.get("owner_id") or request.user.id
+        owner = User.objects.get(id=owner_id)
+
+        # Create form
         form = self.form_class(request.POST)
         if form.is_valid():
             form = form.save(commit=False)
-            form.user = request.user
+            form.user = owner
             form.save()
-            return redirect("event:calendar")
+
+            if owner.id == request.user.id:
+                return redirect("event:calendar")
+            else:
+                return redirect(reverse("event:calendar") + f"?inviter_id={owner.id}")
 
         context = {"form": form}
         return render(request, self.template_name, context)
