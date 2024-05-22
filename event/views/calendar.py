@@ -96,7 +96,7 @@ class EventChangeView(LoginRequiredMixin, View):
 
     def get(self, request, event_id):
         ev = get_object_or_404(Event, id=event_id)
-        
+
         form = self.form_class(instance=ev)  # Create event form
 
         context = {
@@ -112,7 +112,7 @@ class EventChangeView(LoginRequiredMixin, View):
             form.user = request.user
             form.save()
             return redirect("event:calendar")
-    
+
         context = {"form": form}
         return render(request, self.template_name, context)
 
@@ -121,10 +121,10 @@ def notif_read(request):
     if request.method == 'POST':
         notif_id = request.POST.get('notif_id')
         notif = get_object_or_404(Notification, id=notif_id)
-        
+
         if request.user != notif.user:
             return JsonResponse({'message': 'Forbidden.'}, status=403)
-        
+
         notif.is_read = True
         notif.save()
         return JsonResponse({'message': 'Complete.'})
@@ -138,6 +138,19 @@ def delete_event(request, event_id):
     if request.method == 'POST':
         event.delete()
         return JsonResponse({'message': 'Event success delete.'})
+    else:
+        return JsonResponse({'message': 'Error!'}, status=400)
+
+
+def next_day(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        next_event = event
+        next_event.id = None
+        next_event.start_time += timedelta(days=1)
+        next_event.end_time += timedelta(days=1)
+        next_event.save()
+        return JsonResponse({'message': 'Sucess!'})
     else:
         return JsonResponse({'message': 'Error!'}, status=400)
 
@@ -156,15 +169,15 @@ def next_week(request, event_id):
         return JsonResponse({'message': 'Error!'}, status=400)
 
 
-def next_day(request, event_id):
+def next_month(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     if request.method == 'POST':
         next_event = event
         next_event.id = None
-        next_event.start_time += timedelta(days=1)
-        next_event.end_time += timedelta(days=1)
+        next_event.start_time += timedelta(days=30)
+        next_event.end_time += timedelta(days=30)
         next_event.save()
-        return JsonResponse({'message': 'Sucess!'})
+        return JsonResponse({'message': 'Success!'})
     else:
         return JsonResponse({'message': 'Error!'}, status=400)
 

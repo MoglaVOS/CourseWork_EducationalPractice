@@ -63,6 +63,9 @@
                                         </div>
                                         <div class="col-md-12"></div>
                                         <div class="col">
+                                            <button id="modalNextDay" data-event-id-day="" type="button" class="btn btn-success">Каждый день</button>
+                                            <button id="modalNextWeek" data-event-id-week="" type="button" class="btn btn-success">Каждую неделю</button><br>
+                                            <button id="modalNextMonth" data-event-id-month="" type="button" class="btn btn-success">Каждый месяц</button><br>
                                             <a href="{% url 'event:calendar' %}" class="btn btn-danger">Назад</a>
                                             <button id="modalChange" accept-change-id="" type="submit" class="btn btn-success">Изменить</button>
                                         </div>
@@ -80,7 +83,65 @@
 {% include 'base/js.html' %}
 <script>
     const acceptBtn = document.getElementById("modalChange");
+    const nextDayBtn = document.getElementById("modalNextDay");
+    const nextWeekBtn = document.getElementById("modalNextWeek");
+    const nextMonthBtn = document.getElementById("modalNextMonth");
+
     acceptBtn.setAttribute("accept-change-id", id);
+    nextDayBtn.setAttribute("data-event-id-day", id);
+    nextWeekBtn.setAttribute("data-event-id-week", id);
+    nextMonthBtn.setAttribute("data-event-id-month", id);
+
+    document.getElementById('modalNextDay').addEventListener('click', function() {
+        const eventId = this.getAttribute('data-event-id-day');
+        if (confirm('Вы уверены, что хотите добавить это событие на следующий день?')) {
+            $.ajax({
+                url: `/next_day/${eventId}/`,
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function(response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+            });
+        }
+     });
+    document.getElementById('modalNextWeek').addEventListener('click', function() {
+        const eventId = this.getAttribute('data-event-id-week');
+        if (confirm('Вы уверены, что хотите добавить это событие на следующую неделю?')) {
+            $.ajax({
+                url: `/next_week/${eventId}/`,
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function(response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+            });
+        }
+    });
+
+    document.getElementById('modalNextWeek').addEventListener('click', function() {
+        const eventId = this.getAttribute('data-event-id-month');
+        if (confirm('Вы уверены, что хотите добавить это событие на следующий месяц?')) {
+            $.ajax({
+                url: `/next_month/${eventId}/`,
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function(response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+            });
+        }
+    });
+
     acceptBtn.addEventListener('click',function () {
         const eventId = this.getAttribute('accept-change-id');
         $.ajax({
@@ -94,6 +155,7 @@
             }
         });
     });
+
 </script>
 </body>
 </html>
