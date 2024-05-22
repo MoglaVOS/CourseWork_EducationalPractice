@@ -72,7 +72,7 @@ class Event(models.Model):
     objects = EventManager()
 
     def comes_in(self):
-        return get_time_since(self.start_time.replace(tzinfo=get_current_timezone()) - localtime())
+        return get_time_since(localtime(self.start_time) - localtime())
     
     def __str__(self):
         return self.title
