@@ -150,6 +150,7 @@
                             </button>
                         </div>
                         <form method="post">
+                            {% csrf_token %}
                             <div class="modal-body">
                                 <p id="event_time"></p>
                                 <p>
@@ -158,10 +159,12 @@
                                 </p>
                                 <p id="event_priority"></p>
                                 <p id="event_desc"></p>
-                                <div class="modal-footer">
+                                <div class="modal-body">
+                                    <b>Изменить событие?</b><br>
+                                    <a class="btn btn-success" href={% url 'event:eventchange' %}>Изменить</a><br>
+                                    <b>Удалить событие</b><br>
                                     <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить</button>
-                                    <button id="modalNextWeek" data-event-id-week="" type="button" class="btn btn-success">Следующая неделя</button>
-                                    <button id="modalNextDay" data-event-id-day="" type="button" class="btn btn-primary">Следующий день</button>
+
                                 </div>
                             </div>
                         </form>
@@ -244,8 +247,10 @@
                 const id = arg.event.id;
 
                 const deleteBtn = document.getElementById("modalDelete");
-                const nextWeekBtn = document.getElementById("modalNextWeek");
-                const nextDayBtn = document.getElementById("modalNextDay");
+                {#const nextDate = document.getElementById("modalAllDay")#}
+                {#const nextWeekBtn = document.getElementById("modalNextWeek");#}
+                {#const nextDayBtn = document.getElementById("modalNextDay");#}
+
 
                 modalTitle.textContent = title;
                 modalTime.textContent  = formatDateTime(start) + ' - ' + formatDateTime(end);
@@ -276,9 +281,12 @@
                     modalPrior.textContent = "Высокий приоритет"
                     modalPrior.style.color = "#b10000"
                 }
+
+
                 deleteBtn.setAttribute("data-event-id", id);
-                nextWeekBtn.setAttribute("data-event-id-week", id);
-                nextDayBtn.setAttribute("data-event-id-day", id);
+                {#nextDate.setAttribute("data-event-id-all", id);#}
+                {#nextWeekBtn.setAttribute("data-event-id-week", id);#}
+                {#nextDayBtn.setAttribute("data-event-id-day", id);#}
 
                 modalDesc.textContent  = desc || '';
 
@@ -289,7 +297,7 @@
                             url: `/delete_event/${eventId}/`,
                             type: 'POST',
                             data: {
-                                csrf_middleware_token: '{{ csrf_token }}',
+                                csrfmiddlewaretoken: '{{ csrf_token }}',
                             },
                             success: function(response) {
                                 alert(response.message);
@@ -298,39 +306,61 @@
                         });
                     }});
 
-                document.getElementById('modalNextWeek').addEventListener('click', function() {
-                    const eventId = this.getAttribute('data-event-id-week');
-                    if (confirm('Вы уверены, что хотите добавить это событие на следующую неделю?')) {
-                        $.ajax({
-                            url: `/next_week/${eventId}/`,
-                            type: 'POST',
-                            data: {
-                                csrf_middleware_token: '{{ csrf_token }}',
-                            },
-                            success: function(response) {
-                                alert(response.message);
-                                window.location.reload();
-                            },
-                        });
-                    }
-                });
+                {#document.getElementById('modalNextWeek').addEventListener('click', function() {#}
+                {#    const eventId = this.getAttribute('data-event-id-week');#}
+                {#    if (confirm('Вы уверены, что хотите добавить это событие на следующую неделю?')) {#}
+                {#        $.ajax({#}
+                {#            url: `/next_week/${eventId}/`,#}
+                {#            type: 'POST',#}
+                {#            data: {#}
+                {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
+                {#            },#}
+                {#            success: function(response) {#}
+                {#                alert(response.message);#}
+                {#                window.location.reload();#}
+                {#            },#}
+                {#        });#}
+                {#    }#}
+                {# }); #}
+                {##}
+                {#document.getElementById('modalNextDay').addEventListener('click', function() {#}
+                {#    const eventId = this.getAttribute('data-event-id-day');#}
+                {#    if (confirm('Вы уверены, что хотите добавить это событие на следующий день?')) {#}
+                {#        $.ajax({#}
+                {#            url: `/next_day/${eventId}/`,#}
+                {#            type: 'POST',#}
+                {#            data: {#}
+                {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
+                {#            },#}
+                {#            success: function(response) {#}
+                {#                alert(response.message);#}
+                {#                window.location.reload();#}
+                {#            },#}
+                {#        });#}
+                {#    }#}
+                {# });#}
 
-                document.getElementById('modalNextDay').addEventListener('click', function() {
-                    const eventId = this.getAttribute('data-event-id-day');
-                    if (confirm('Вы уверены, что хотите добавить это событие на следующий день?')) {
-                        $.ajax({
-                            url: `/next_day/${eventId}/`,
-                            type: 'POST',
-                            data: {
-                                csrf_middleware_token: '{{ csrf_token }}',
-                            },
-                            success: function(response) {
-                                alert(response.message);
-                                window.location.reload();
-                            },
-                        });
-                    }
-                });
+                {#document.addEventListener('DOMContentLoaded', function() {#}
+                {#    const form = document.querySelector('data-event-id-all');#}
+                {#    form.addEventListener('submit', function(event) {#}
+                {#        event.preventDefault();#}
+                {#        const formData = new FormData(form);#}
+                {#        fetch(form.action, {#}
+                {#            method: 'POST',#}
+                {#            url: `/next_date/${eventId}/`,#}
+                {#            body: formData#}
+                {#        })#}
+                {#            .then(response => response.json())#}
+                {#            .then(data => {#}
+                {#                // Обработка ответа от сервера#}
+                {#                console.log(data);#}
+                {#            })#}
+                {#            .catch(error => {#}
+                {#                // Обработка ошибки#}
+                {#                console.error(error);#}
+                {#            });#}
+                {#    });#}
+                {# }); #}
 
                 modal.style.display = 'block';
             },

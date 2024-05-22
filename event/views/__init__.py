@@ -1,5 +1,5 @@
 from event.views.chat import ChatView
-from .calendar import CalendarView
+from .calendar import CalendarView, EventChangeView
 from .dashboard import DashboardView
 from .calendar import (
     delete_event,

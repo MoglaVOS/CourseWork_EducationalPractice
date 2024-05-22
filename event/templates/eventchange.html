@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% load static %}
+
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'css/calendar.css' %}"/>{% endblock css %}
+
+<body>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile row">
+
+                <!-- JS Calendar loader -->
+                <div class="col-md-9">
+                    <div id="calendar"></div>
+                </div>
+
+                <!-- Event View Widget -->
+                <div class="modal fade show" id="event_modal" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary">
+                                <h5 class="modal-title text-white" id="event_title"></h5>
+                                <button id="modalDetailClose" type="button" class="warning" data-dismiss="modal" aria-label="Close">
+                                    <span style="color: red; font-size: 20px" aria-hidden="true"><b>&times;</b></span>
+                                </button>
+                            </div>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <p id="event_time"></p>
+                                    <p>
+                                        <b>Локация:</b><q id="event_place"></q><br>
+                                        <b>Категория:</b><q id="event_type"></q>
+                                    </p>
+                                    <p id="event_priority"></p>
+                                    <p id="event_desc"></p>
+
+                                        <b>Повторить событие?</b><br>
+                                        {#                                        <button id="modalNextDay" data-event-id-day="" type="button" class="btn btn-primary">Завтра</button>#}
+                                        {#                                        <button id="modalNextWeek" data-event-id-week="" type="button" class="btn btn-success">На следующей неделе</button><br>#}
+
+                                        <label id = "modalAllDay" for="time_delta_hours">Временной интервал в часах:</label>
+                                        <input type="number" id="time_delta_hours" name="time_delta_hours" value="0">
+                                        <br>
+                                        <label id = "modalAllDay" for="time_delta_minutes">Временной интервал в минутах:</label>
+                                        <input type="number" id="time_delta_minutes" name="time_delta_minutes" value="0">
+                                        <br>
+                                        <label id = "modalAllDay" for="new_date">Новая дата:</label>
+                                        <input type="date" id="new_date" name="new_date">
+                                        <br>
+                                        <label id = "modalAllDay" for="repetition_frequency">Частота повторения:</label>
+                                        <select id="repetition_frequency" name="repetition_frequency">
+                                            <option value="daily">Ежедневно</option>
+                                            <option value="weekly">Еженедельно</option>
+                                            <option value="monthly">Ежемесячно</option>
+                                        </select><br>
+                                        <button type="submit" class="btn btn-primary">Изменить</button>
+
+                                        <b>Удалить событие</b><br>
+                                        <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="{% static 'js/fullcalendar.js' %}"></script>
+</html>
