@@ -26,7 +26,7 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
-    list_display = ["message", "user", "is_deleted"]
-    fields = ["user", "message", "is_deleted"]
+    list_display = ["message", "user", "event", "is_deleted"]
+    fields = ["user", "message", "event", "is_deleted"]
     readonly_fields = ["created_at"]
     search_fields = ["message"]
