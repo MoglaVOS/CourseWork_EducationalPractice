@@ -47,9 +47,16 @@
         <!-- User Menu-->
         <li class="dropdown">
             <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Open Profile Menu">
-                <i class="fa fa-user fa-lg"></i>
+                <i class="fa fa-user  fa-lg"></i>
             </a>
             <ul class="dropdown-menu settings-menu dropdown-menu-right">
+                {% if request.user.is_staff %}
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin:index' %}">
+                        <i class="fa fa-solid fa-lock fa-lg"></i> Админ-панель
+                    </a>
+                </li>
+                {% endif %}
                 <li>
                     <a class="dropdown-item" href="{% url 'account:profile' %}">
                         <i class="fa fa-user fa-lg"></i> Профиль
@@ -97,20 +104,23 @@
 <script src="{% static 'js/plugins/pace.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector(".app-notification__item").addEventListener("click", e => {
-            const notif_id = e.currentTarget.getAttribute('notif-id');
-            const next_page = e.currentTarget.getAttribute('notif-goto');
-            $.ajax({
-                url: `/notif_read/${notif_id}/`,
-                type: 'POST',
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                },
-                success: function(resp) {
-                    window.location = next_page;
-                }
+        const matches = document.querySelectorAll(".app-notification__item")
+        matches.forEach((match) => {
+            match.addEventListener("click", e => {
+                const notif_id = e.currentTarget.getAttribute('notif-id');
+                const next_page = e.currentTarget.getAttribute('notif-goto');
+                $.ajax({
+                    url: `/notif_read/${notif_id}/`,
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function(resp) {
+                        window.location = next_page;
+                    }
+                });
             });
-        });
+        })
     });
 </script>
 {% block extra_scripts %}
