@@ -161,10 +161,9 @@
                                 <p id="event_desc"></p>
                                 <div class="modal-body">
                                     <b>Изменить событие?</b><br>
-                                    <a class="btn btn-success" href={% url 'event:eventchange' %}>Изменить</a><br>
-                                    <b>Удалить событие</b><br>
+                                    <button id="modalEdit" data-event-id="" type="button" class="btn btn-success">Изменить</button>
+                                    <br><b>Удалить событие</b><br>
                                     <button id="modalDelete" data-event-id="" type="button" class="btn btn-danger">Удалить</button>
-
                                 </div>
                             </div>
                         </form>
@@ -246,6 +245,7 @@
                 const desc  = arg.event.extendedProps.description;
                 const id = arg.event.id;
 
+                const editBtn = document.getElementById("modalEdit");
                 const deleteBtn = document.getElementById("modalDelete");
                 {#const nextDate = document.getElementById("modalAllDay")#}
                 {#const nextWeekBtn = document.getElementById("modalNextWeek");#}
@@ -282,7 +282,7 @@
                     modalPrior.style.color = "#b10000"
                 }
 
-
+                editBtn.setAttribute("data-event-id", id);
                 deleteBtn.setAttribute("data-event-id", id);
                 {#nextDate.setAttribute("data-event-id-all", id);#}
                 {#nextWeekBtn.setAttribute("data-event-id-week", id);#}
@@ -290,7 +290,12 @@
 
                 modalDesc.textContent  = desc || '';
 
-                document.getElementById('modalDelete').addEventListener('click', function() {
+                editBtn.addEventListener('click', function() {
+                    const eventId = this.getAttribute('data-event-id');
+                    window.location = `/event_change/${eventId}`
+                });
+
+                deleteBtn.addEventListener('click', function() {
                     const eventId = this.getAttribute('data-event-id');
                     if (confirm('Вы уверены, что хотите удалить это событие?')) {
                         $.ajax({
@@ -304,7 +309,8 @@
                                 window.location.reload();
                             },
                         });
-                    }});
+                    }
+                });
 
                 {#document.getElementById('modalNextWeek').addEventListener('click', function() {#}
                 {#    const eventId = this.getAttribute('data-event-id-week');#}

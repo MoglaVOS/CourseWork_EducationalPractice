@@ -67,7 +67,7 @@ class EventChangeForm(ModelForm):
         exclude = ["event"]
 
     def __init__(self, *args, **kwargs):
-        super(EventCreateForm, self).__init__(*args, **kwargs)
+        super(EventChangeForm, self).__init__(*args, **kwargs)
 
         self.fields["start_time"].input_formats = ("%Y-%m-%dT%H:%M",)
         self.fields["end_time"].input_formats = ("%Y-%m-%dT%H:%M",)

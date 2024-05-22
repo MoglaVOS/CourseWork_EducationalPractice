@@ -27,23 +27,21 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="email">E-Mail:</label> {{ user.email }}
+                                                <label class="label" for="email">Название</label> {{ form.title }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="position">Отдел:</label>  {{ user.location }}
+                                                <label class="label" for="position">Описание</label>  {{ form.description }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="salary">Должность:</label> {{ event.description }}
+                                                <label class="label" for="salary">Тип</label> {{ form.type }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <a href="{% url 'event:calendar' %}" class="btn btn-danger">Назад</a>
-                                            <a href="{% url 'account:change_password' %}" class="btn btn-secondary">Изменить
-                                                пароль</a>
                                         </div>
                                     </div>
                                 </form>
@@ -69,7 +67,7 @@
 
             // Send form data to the server
             $.ajax({
-                url: '{% url 'event:eventchange' %}',
+                url: '{% url 'event:calendar' %}',
                 type: 'POST',
                 data: formData,
                 success: function (response) {
