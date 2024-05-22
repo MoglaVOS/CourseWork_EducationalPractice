@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from django.db import models
 
 from account.models import User
@@ -36,12 +36,13 @@ class EventManager(models.Manager):
     @staticmethod
     def get_events_in(user, dt: timedelta):
         """ Return events for user in range from now to time delta """
+        t = datetime.now().replace(tzinfo=UTC)
         return Event.objects.filter(
             user=user,
             is_active=True,
             is_deleted=False,
-            start_time__lte=(localtime() + dt),
-            start_time__gt=localtime()
+            start_time__lte=(t + dt),
+            start_time__gt=t
         ).order_by("start_time")
 
 
@@ -82,6 +83,7 @@ class Event(models.Model):
     objects = EventManager()
 
     def comes_in(self):
+        print(localtime(self.start_time), localtime(), localtime(self.start_time) - localtime())
         return get_time_since(localtime(self.start_time) - localtime())
     
     def __str__(self):
