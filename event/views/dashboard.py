@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from event.models import Event
 from event.models.notification import Notification
+from account.models.invite import Invite
 
 
 class DashboardView(LoginRequiredMixin, View):
@@ -21,10 +22,15 @@ class DashboardView(LoginRequiredMixin, View):
         upcoming_events = Event.objects.get_events_after_date(user=request.user, date=today + timedelta(days=1))
         notifications = Notification.objects.get_upcoming_notifications(user=request.user, time=timedelta(days=2))
 
+        invited_to = Invite.objects.get_invites_by_invitee(request.user)
+        invitees = Invite.objects.get_invites_by_inviter(request.user)
+
         context = {
             "events": events,
             "current_events": current_events,
             "upcoming_events": upcoming_events,
-            "notifications": notifications
+            "notifications": notifications,
+            "invited_to": invited_to,
+            "invitees": invitees
         }
         return render(request, self.template_name, context)

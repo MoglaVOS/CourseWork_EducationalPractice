@@ -1,8 +1,10 @@
 from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 from account.forms import UserInviteForm
+from account.models import Invite
 
 
 class UserInviteView(LoginRequiredMixin, View):
@@ -27,3 +29,17 @@ class UserInviteView(LoginRequiredMixin, View):
 
         context = {"form": form}
         return render(request, self.template_name, context)
+
+
+def invite_delete(request):
+    print(request.method)
+    if request.method == "POST":
+        invite_id = request.POST.get("invite_id")
+        try:
+            invite = Invite.objects.get(id=invite_id)
+            invite.delete()
+            return JsonResponse({"message": "Приглашение успешно удалено"})
+        except Invite.DoesNotExist:
+            return JsonResponse({"message": "Приглашения не существует"})
+    else:
+        return JsonResponse({"message": "Метод не поддерживается"})

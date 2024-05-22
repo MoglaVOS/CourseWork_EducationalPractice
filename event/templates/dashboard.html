@@ -81,26 +81,131 @@
             <i class="icon fa fa-star fa-3x"></i>
             <div class="info">
                 <h4>Участников календаря</h4>
-                <p><b>1</b></p>
+                <p><b>{{ invitees.count }}</b></p>
             </div>
         </div>
     </div>
 
-    <!-- Invite new User into calendar -->
-    <div class="col-md-6 col-lg-3">
-        <a class="btn btn-success" href={% url 'account:invite' %}>Пригласить участника</a>
+    <!-- Invitees Table -->
+    <div class="col-md-6">
+        <div class="card-header bg-primary">
+            <h3 class="text-white">Участники Вашего календаря</h3>
+        </div>
+        <div class="tile">
+            <div class="tile-body">
+                <div class="table-responsive" style="overflow: hidden">
+                    <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-hover table-bordered dataTable no-footer"
+                                       id="table-invitees" role="grid" aria-describedby="sampleTable_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting" style="width: 100px;">Почта</th>
+                                        <th class="sorting" style="width: 25px;">Статус</th>
+                                        <th class="sorting" style="width: 25px;">Управление</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for invite in invitees %}
+                                        <tr role="row" class="odd">
+                                            <td><a href="/calendar">{{ invite.invitee_email }}</a></td>
+                                            <td>
+                                                {% if invite.status == 0 %}
+                                                    <div class="btn btn-secondary btn-sm">Ожидание</div>
+                                                {% elif invite.status == 1 %}
+                                                    <div class="btn btn-success btn-sm">Подтвержден</div>
+                                                {% elif invite.status == 2 %}
+                                                    <div class="btn btn-danger btn-sm">Отклонен</div>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button id="delete-invite-{{ invite.id }}" data-invite-id="{{ invite.id }}"
+                                                        type="button" class="btn btn-danger btn-sm">
+                                                    Удалить
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12 text-right">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tile-footer">
+                <div class="text-right">
+                    <a class="btn btn-success"  href={% url 'account:invite' %}>Пригласить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invited To Table -->
+    <div class="col-md-6">
+        <div class="card-header bg-primary">
+            <h3 class="text-white align-content-center">Ваши приглашения</h3>
+        </div>
+        <div class="tile">
+            <div class="tile-body">
+                <div class="table-responsive" style="overflow: hidden">
+                    <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-hover table-bordered dataTable no-footer"
+                                       id="table-invited" role="grid" aria-describedby="sampleTable_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting" style="width: 50px;">Почта</th>
+                                            <th class="sorting" style="width: 25px;">Статус</th>
+                                            <th class="sorting" style="width: 100px;">Управление</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for invite in invited_to %}
+                                        <tr role="row" class="odd">
+                                            <td><a href="/calendar">{{ invite.inviter.email }}</a></td>
+                                            <td>
+                                                {% if invite.status == 0 %}
+                                                    <div class="btn btn-secondary btn-sm">Ожидание</div>
+                                                {% elif invite.status == 1 %}
+                                                    <div class="btn btn-success btn-sm">Подтвержден</div>
+                                                {% elif invite.status == 2 %}
+                                                    <div class="btn btn-danger btn-sm">Отклонен</div>
+                                                {% endif %}
+                                            </td>
+                                            <td class="align-content-between">
+                                                <button class="btn btn-danger btn-sm" type="button">Отказаться</button>
+                                                <button class="btn btn-success btn-sm" type="button">Подтвердить</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Event Table -->
     <div class="col-md-12">
+        <div class="card-header bg-primary">
+            <h3 class="text-white">Все события</h3>
+        </div>
         <div class="tile">
             <div class="tile-body">
-                <div class="table-responsive">
-                    <div id="sampleTable_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
+                <div class="table-responsive" style="overflow: hidden">
+                    <div class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer">
                         <div class="row">
                             <div class="col-sm-12">
                                 <table class="table table-hover table-bordered dataTable no-footer"
-                                       id="table" role="grid" aria-describedby="sampleTable_info">
+                                       id="table-events" role="grid" aria-describedby="sampleTable_info">
                                     <thead>
                                         <tr role="row">
                                             <th class="sorting" style="width: 25px;">Название события</th>
@@ -133,20 +238,30 @@
 {% block extra_scripts %}
 <script type="text/javascript" src="{% static 'js/plugins/jquery.dataTables.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/plugins/dataTables.bootstrap.min.js' %}"></script>
-<script type="text/javascript">$('#table').DataTable()</script>
+<script type="text/javascript">$('#table-invitees').DataTable()</script>
+<script type="text/javascript">$('#table-invited').DataTable()</script>
+<script type="text/javascript">$('#table-events').DataTable()</script>
 <script>
-// Create Invitation Modal button
-const btnInvite = document.getElementById('modal-invite-btn');
-btnInvite.addEventListener('click', () => {
-    const inviteDiv = document.getElementById('modal-invite');
-    inviteDiv.style.display = 'block';
+// Invitees table - Delete button
+document.querySelector('[id^="delete-invite-"]').addEventListener('click', function () {
+    const inviteId = $(this).data('invite-id')
+    if (confirm('Вы уверены, что хотите отменить это приглашение?')) {
+        $.ajax({
+            url: `/delete_event/`,
+            data: {
+                'invite_id': inviteId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            type: 'POST',
+            success: function (response) {
+                alert(response.message);
+                window.location.reload();
+            },
+            error: function (error) {
+                alert('Error:' + error);
+            }
+        });
+    }
 });
-
-// Close Invitation Modal button
-const btnInviteClose = document.getElementById('modal-invite-close-btn');
-btnInviteClose.addEventListener('click', () => {
-    const inviteDiv = document.getElementById('modal-invite');
-    inviteDiv.style.display = 'none';
-})
 </script>
 {% endblock extra_scripts %}
