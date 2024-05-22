@@ -11,22 +11,12 @@ class NotificationManager(models.Manager):
     """ Event manager """
 
     @staticmethod
-    def get_all_notifications(user):
-        """ Return all notifications for user """
-        return Notification.objects.filter(user=user, is_deleted=False)
+    def get_all_notifications(user, time: timedelta):
+        """ Return all notifications for user and make them
+        if some events are about to happen """
 
-    @staticmethod
-    def get_unread_notifications(user):
-        """ Return all unread notifications for user """
-        return Notification.objects.filter(user=user, is_read=False, is_deleted=False)
-
-    @staticmethod
-    def get_upcoming_notifications(user, time: timedelta):
-        """ Return or make all notifications for user about events
-        that have less than `time` left to happen """
-        print(localtime())
         upcoming = Event.objects.get_events_in(user=user, dt=time)
-        notifications = []
+        notifications = list(Notification.objects.filter(user=user, is_deleted=False, event=None))
         for event in upcoming:
             # Checking if user been issued a notification already
             notifs = Notification.objects.filter(
@@ -39,6 +29,7 @@ class NotificationManager(models.Manager):
                     user=user,
                     title="Предстоящее событие",
                     description=f"Через {event.comes_in()} состоится \"{event.title}\"!",
+                    url="event:calendar",
                     event=event
                 )
                 notifications.append(notif)
@@ -49,6 +40,11 @@ class NotificationManager(models.Manager):
                     notifications.append(notif)
 
         return notifications
+        
+    @staticmethod
+    def get_unread_notifications(user):
+        """ Return all unread notifications for user """
+        return Notification.objects.filter(user=user, is_read=False, is_deleted=False)
 
 
 class Notification(models.Model):
@@ -58,7 +54,8 @@ class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifs")
     title = models.CharField(max_length=200)
     description = models.TextField()
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="notifs")
+    url = models.CharField(max_length=200)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="notifs", null=True)
     is_read = models.BooleanField(default=False)
 
     # Static fields

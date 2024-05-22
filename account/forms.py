@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 
 from account.models import User
 from account.models import Invite
+from event.models.notification import Notification
 
 
 class SignInForm(forms.Form):
@@ -171,6 +172,13 @@ class UserInviteForm(forms.ModelForm):
 
     def save(self, commit=True):
         invite = super().save(commit=False)
+        Notification.objects.create(
+            user=User.objects.get(email=invite.invitee_email),
+            title="Приглашение в календарь",
+            description=f"{self.inviter.second_name} {self.inviter.first_name} пригласил вас в свой календарь.",
+            url="event:dashboard",
+            event=None
+        )
         if commit:
             invite.save()
         return invite

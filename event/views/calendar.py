@@ -19,7 +19,7 @@ class CalendarView(LoginRequiredMixin, View):
     def get(self, request):
         form = self.form_class()  # Create event form
         events_today = Event.objects.get_events_by_date(user=request.user, date=datetime.today())  # Side panel
-        notifications = Notification.objects.get_upcoming_notifications(user=request.user, time=timedelta(days=2))
+        notifications = Notification.objects.get_all_notifications(user=request.user, time=timedelta(days=2))
         event_list = []  # Calendar table
 
         # Fill calendar table
@@ -65,7 +65,7 @@ class EventChangeView(LoginRequiredMixin, View):
     def get(self, request):
         form = self.form_class()  # Create event form
         events_today = Event.objects.get_events_by_date(user=request.user, date=datetime.today())  # Side panel
-        notifications = Notification.objects.get_upcoming_notifications(user=request.user, time=timedelta(days=2))
+        notifications = Notification.objects.get_all_notifications(user=request.user, time=timedelta(days=2))
         event_list = []  # Calendar table
 
         # Fill calendar table

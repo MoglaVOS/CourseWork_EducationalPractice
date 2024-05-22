@@ -20,7 +20,7 @@ class DashboardView(LoginRequiredMixin, View):
         events = Event.objects.get_all_events(user=request.user)
         current_events = Event.objects.get_events_by_date(user=request.user, date=today)
         upcoming_events = Event.objects.get_events_after_date(user=request.user, date=today + timedelta(days=1))
-        notifications = Notification.objects.get_upcoming_notifications(user=request.user, time=timedelta(days=2))
+        notifications = Notification.objects.get_all_notifications(user=request.user, time=timedelta(days=2))
 
         invited_to = Invite.objects.get_invites_by_invitee(request.user)
         invitees = Invite.objects.get_invites_by_inviter(request.user)

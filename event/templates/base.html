@@ -27,7 +27,7 @@
                 <li class="app-notification__title">У вас {{ notifications|length }} новых уведомлений.</li>
                 {% for notif in notifications %}
                 <li class="app-notification__content">
-                    <a class="app-notification__item" href="javascript:">
+                    <a class="app-notification__item" href="{% url notif.url %}">
                         <span class="app-notification__icon">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x text-primary"></i>
