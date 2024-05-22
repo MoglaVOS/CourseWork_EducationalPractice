@@ -104,6 +104,8 @@ def notif_read(request, notif_id):
     notif = get_object_or_404(Notification, id=notif_id)
     
     if request.method == 'POST':
+        if request.user != notif.user:
+            return JsonResponse({'message': 'Forbidden.'}, status=403)
         notif.is_read = True
         notif.save()
         return JsonResponse({'message': 'Complete.'})
