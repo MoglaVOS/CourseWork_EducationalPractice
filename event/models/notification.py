@@ -1,5 +1,5 @@
 from django.utils.timezone import localtime
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.db import models
 
 from account.models import User
@@ -24,7 +24,8 @@ class NotificationManager(models.Manager):
     def get_upcoming_notifications(user, time: timedelta):
         """ Return or make all notifications for user about events
         that have less than `time` left to happen """
-        upcoming = Event.objects.get_events_after_date(user=user, date=datetime.today() - time)
+        print(localtime())
+        upcoming = Event.objects.get_events_in(user=user, dt=time)
         notifications = []
         for event in upcoming:
             # Checking if user been issued a notification already

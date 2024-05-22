@@ -1,5 +1,5 @@
-from django.utils.timezone import localtime, get_current_timezone
-from datetime import datetime
+from django.utils.timezone import localtime
+from datetime import datetime, timedelta
 from django.db import models
 
 from account.models import User
@@ -32,6 +32,17 @@ class EventManager(models.Manager):
             is_active=True,
             is_deleted=False,
             start_time__gte=date
+        ).order_by("start_time")
+    
+    @staticmethod
+    def get_events_in(user, dt: timedelta):
+        """ Return events for user in range from now to time delta """
+        return Event.objects.filter(
+            user=user,
+            is_active=True,
+            is_deleted=False,
+            start_time__lte=(localtime() + dt),
+            start_time__gt=localtime()
         ).order_by("start_time")
 
 
