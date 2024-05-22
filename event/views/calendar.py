@@ -72,8 +72,9 @@ class EventChangeView(LoginRequiredMixin, View):
         }
         return render(request, self.template_name, context)
 
-    def post(self, request):
-        form = self.form_class(request.POST)
+    def post(self, request, event_id):
+        ev = get_object_or_404(Event, id=event_id)
+        form = self.form_class(request.POST, instance=ev)
         if form.is_valid():
             form = form.save(commit=False)
             form.user = request.user
