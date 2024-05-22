@@ -32,7 +32,6 @@ class UserInviteView(LoginRequiredMixin, View):
 
 
 def invite_delete(request):
-    print(request.method)
     if request.method == "POST":
         invite_id = request.POST.get("invite_id")
         try:
@@ -43,3 +42,32 @@ def invite_delete(request):
             return JsonResponse({"message": "Приглашения не существует"})
     else:
         return JsonResponse({"message": "Метод не поддерживается"})
+
+
+def invite_decline(request):
+    if request.method == "POST":
+        invite_id = request.POST.get("invite_id")
+        try:
+            invite = Invite.objects.get(id=invite_id)
+            invite.status = 2
+            invite.save()
+            return JsonResponse({"message": "Вы отказались от приглашения"})
+        except Invite.DoesNotExist:
+            return JsonResponse({"message": "Приглашения не существует"})
+    else:
+        return JsonResponse({"message": "Метод не поддерживается"})
+
+
+def invite_accept(request):
+    if request.method == "POST":
+        invite_id = request.POST.get("invite_id")
+        try:
+            invite = Invite.objects.get(id=invite_id)
+            invite.status = 1
+            invite.save()
+            return JsonResponse({"message": "Вы приняли приглашение"})
+        except Invite.DoesNotExist:
+            return JsonResponse({"message": "Приглашения не существует"})
+    else:
+        return JsonResponse({"message": "Метод не поддерживается"})
+

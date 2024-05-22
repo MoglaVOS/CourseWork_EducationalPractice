@@ -11,5 +11,7 @@ urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("change_password/", views.ChangePasswordView.as_view(), name="change_password"),
     path("invite/", views.UserInviteView.as_view(), name="invite"),
-    path("delete_event/", views.invite_delete, name="delete_event"),
+    path("invite/delete/", views.invite_delete, name="invite_delete"),
+    path("invite/decline/", views.invite_decline, name="invite_decline"),
+    path("invite/accept/", views.invite_accept, name="invite_accept"),
 ]

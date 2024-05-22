@@ -120,7 +120,7 @@
                                                 {% endif %}
                                             </td>
                                             <td>
-                                                <button id="delete-invite-{{ invite.id }}" data-invite-id="{{ invite.id }}"
+                                                <button id="delete-{{ invite.id }}" data-invite-id="{{ invite.id }}"
                                                         type="button" class="btn btn-danger btn-sm">
                                                     Удалить
                                                 </button>
@@ -172,14 +172,20 @@
                                                 {% if invite.status == 0 %}
                                                     <div class="btn btn-secondary btn-sm">Ожидание</div>
                                                 {% elif invite.status == 1 %}
-                                                    <div class="btn btn-success btn-sm">Подтвержден</div>
+                                                    <div class="btn btn-success btn-sm">Принято</div>
                                                 {% elif invite.status == 2 %}
-                                                    <div class="btn btn-danger btn-sm">Отклонен</div>
+                                                    <div class="btn btn-danger btn-sm">Отклонено</div>
                                                 {% endif %}
                                             </td>
                                             <td class="align-content-between">
-                                                <button class="btn btn-danger btn-sm" type="button">Отказаться</button>
-                                                <button class="btn btn-success btn-sm" type="button">Подтвердить</button>
+                                                <button id="decline-{{ invite.id }}" data-invite-id="{{ invite.id }}"
+                                                        type="button" class="btn btn-danger btn-sm">
+                                                    Отказаться
+                                                </button>
+                                                <button id="accept-{{ invite.id }}" data-invite-id="{{ invite.id }}"
+                                                        type="button" class="btn btn-success btn-sm">
+                                                    Подтвердить
+                                                </button>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -243,25 +249,75 @@
 <script type="text/javascript">$('#table-events').DataTable()</script>
 <script>
 // Invitees table - Delete button
-document.querySelector('[id^="delete-invite-"]').addEventListener('click', function () {
-    const inviteId = $(this).data('invite-id')
-    if (confirm('Вы уверены, что хотите отменить это приглашение?')) {
-        $.ajax({
-            url: `/delete_event/`,
-            data: {
-                'invite_id': inviteId,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            type: 'POST',
-            success: function (response) {
-                alert(response.message);
-                window.location.reload();
-            },
-            error: function (error) {
-                alert('Error:' + error);
-            }
-        });
-    }
+document.querySelectorAll('[id^="delete-"]').forEach(function(element) {
+    element.addEventListener('click', function () {
+        const inviteId = $(this).data('invite-id')
+        if (confirm('Вы уверены, что хотите отменить это приглашение?')) {
+            $.ajax({
+                url: `/invite/delete/`,
+                data: {
+                    'invite_id': inviteId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                type: 'POST',
+                success: function (response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+                error: function (error) {
+                    alert('Error:' + error);
+                }
+            });
+        }
+    })
+});
+
+// Invited_by table - Decline button
+document.querySelectorAll('[id^="decline-"]').forEach(function(element) {
+    element.addEventListener('click', function () {
+        const inviteId = $(this).data('invite-id')
+        if (confirm('Вы уверены, что хотите отклонить это приглашение?')) {
+            $.ajax({
+                url: `/invite/decline/`,
+                data: {
+                    'invite_id': inviteId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                type: 'POST',
+                success: function (response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+                error: function (error) {
+                    alert('Error:' + error);
+                }
+            });
+        }
+    })
+});
+
+// Invited_by table - Accept button
+document.querySelectorAll('[id^="accept-"]').forEach(function(element) {
+    element.addEventListener('click', function () {
+        const inviteId = $(this).data('invite-id')
+        if (confirm('Вы уверены, что хотите принять это приглашение?')) {
+            $.ajax({
+                url: `/invite/accept/`,
+                data: {
+                    'invite_id': inviteId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                type: 'POST',
+                success: function (response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+                error: function (error) {
+                    alert('Error:' + error);
+                }
+            });
+        }
+    })
 });
 </script>
 {% endblock extra_scripts %}
