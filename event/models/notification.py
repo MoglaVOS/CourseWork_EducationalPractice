@@ -1,9 +1,8 @@
-from django.utils.timezone import localtime
 from datetime import timedelta
 from django.db import models
 
 from account.models import User
-from common.date import get_time_since
+from common.date import get_time_since, localtime
 from event.models.event import Event
 
 

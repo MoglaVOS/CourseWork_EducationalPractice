@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from math import floor
 
 
@@ -29,3 +30,8 @@ def get_time_since(dt: timedelta):
         return f"{floor(interval)} минут"
 
     return f"{floor(s)} секунд"
+
+def localtime(t: datetime | None = None):
+    if t is None: return datetime.now(ZoneInfo('Europe/Moscow'))
+    return t.replace(tzinfo=ZoneInfo('Europe/Moscow'))
+
