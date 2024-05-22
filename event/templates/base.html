@@ -27,7 +27,7 @@
                 <li class="app-notification__title">У вас {{ notifications|length }} новых уведомлений.</li>
                 {% for notif in notifications %}
                 <li class="app-notification__content">
-                    <a class="app-notification__item" href="{% url notif.url %}">
+                    <a class="app-notification__item" href="#" notif-goto="{% url notif.url %}" notif-id="{{ notif.id }}">
                         <span class="app-notification__icon">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x text-primary"></i>
@@ -42,9 +42,6 @@
                     </a>
                 </li>
                 {% endfor %}
-                <li class="app-notification__footer">
-                    <a href="#">Посмотреть все уведомления</a>
-                </li>
             </ul>
         </li>
         <!-- User Menu-->
@@ -98,6 +95,24 @@
 <script src="{% static 'js/main.js' %}"></script>
 <!-- The javascript plugin to display page loading on top -->
 <script src="{% static 'js/plugins/pace.min.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector(".app-notification__item").addEventListener("click", e => {
+            const notif_id = e.currentTarget.getAttribute('notif-id');
+            const next_page = e.currentTarget.getAttribute('notif-goto');
+            $.ajax({
+                url: `/notif_read/${notif_id}/`,
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function(resp) {
+                    window.location = next_page;
+                }
+            });
+        });
+    });
+</script>
 {% block extra_scripts %}
 {% endblock extra_scripts %}
 </body>

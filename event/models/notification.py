@@ -16,7 +16,7 @@ class NotificationManager(models.Manager):
         if some events are about to happen """
 
         upcoming = Event.objects.get_events_in(user=user, dt=time)
-        notifications = list(Notification.objects.filter(user=user, is_deleted=False, event=None))
+        notifications = list(Notification.objects.filter(user=user, is_deleted=False, is_read=False, event=None))
         for event in upcoming:
             # Checking if user been issued a notification already
             notifs = Notification.objects.filter(
