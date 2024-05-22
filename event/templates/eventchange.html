@@ -20,29 +20,53 @@
                         <div class="row justify-content-center py-md-5">
                             <div class="col-lg-9">
                                 <div class="social-wrap">
-                                    <h3 class="mb-3 text-center">Профиль пользователя</h3>
+                                    <h3 class="mb-3 text-center">Изменить событие</h3>
                                 </div>
                                 <form action="#" method="post" >
                                     {% csrf_token %}
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="email">Название</label> {{ form.title }}
+                                                <label class="label" for="title">Название</label> {{ form.title }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="position">Описание</label>  {{ form.description }}
+                                                <label class="label" for="description">Описание</label>  {{ form.description }}
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="label" for="salary">Тип</label> {{ form.type }}
+                                                <label class="label" for="location">Локация</label>{{ form.location }}
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="label" for="type">Тип</label> {{ form.type }}
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="label" for="priority">Приоритет</label> {{ form.priority }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"></div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="label" for="start_time">Начало</label> {{ form.start_time }}
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="label" for="end_time">Конец</label> {{ form.end_time }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"></div>
+                                        <div class="col">
                                             <a href="{% url 'event:calendar' %}" class="btn btn-danger">Назад</a>
+                                            <button id="modalChange" accept-change-id="" type="submit" class="btn btn-success">Изменить</button>
                                         </div>
+
                                     </div>
                                 </form>
                             </div>
@@ -55,30 +79,19 @@
 </section>
 {% include 'base/js.html' %}
 <script>
-
-    // JavaScript code to handle form submission and display user profile data
-    $(document).ready(function () {
-        // Handle form submission
-        $('form').submit(function (event) {
-            event.preventDefault();
-
-            // Retrieve form data
-            const formData = $(this).serialize();
-
-            // Send form data to the server
-            $.ajax({
-                url: '{% url 'event:calendar' %}',
-                type: 'POST',
-                data: formData,
-                success: function (response) {
-                    // Display user profile data
-                    $('#profile-container').html(response);
-                },
-                error: function (xhr, status, error) {
-                    // Handle error
-                    console.log(error);
-                }
-            });
+    const acceptBtn = document.getElementById("modalChange");
+    acceptBtn.setAttribute("accept-change-id", id);
+    acceptBtn.addEventListener('click',function () {
+        const eventId = this.getAttribute('accept-change-id');
+        $.ajax({
+            url: 'event_change/${eventId}/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            error: function (error) {
+                alert('Error: ' + error);
+            }
         });
     });
 </script>

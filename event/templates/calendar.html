@@ -101,31 +101,31 @@
                         <form method="post">
                             {% csrf_token %}
                             <div class="modal-body">
-                                <div class="form-group">
+                                <div class="col-form-group">
                                     <label for="recipient-name" class="col-form-label">Название события:</label>
                                     {{ form.title }}
                                 </div>
-                                <div class="form-group">
+                                <div class="col-form-group">
                                     <label for="message-text" class="col-form-label">Описание:</label>
                                     {{ form.description }}
                                 </div>
-                                <div class="form-group">
+                                <div class="col-form-group">
                                     <label for="location" class="col-form-label">Место:</label>
                                     {{ form.location }}
                                 </div>
-                                <div class="form-group">
+                                <div class="col-form-group">
                                     <label for="recipient-name" class="col-form-label">Тип:</label>
                                     {{ form.type }}
                                 </div>
-                                <div class="form-group">
+                                <div class="col-form-group">
                                     <label for="priority" class="col-form-label">Приоритет:</label>
                                     {{ form.priority }}
                                 </div>
-                                <div class="form-group">
+                                <div class="col-form-group">
                                     <label for="message-text" class="col-form-label">Начало:</label>
                                     {{ form.start_time }}
                                 </div>
-                                <div class="form-group">
+                                <div class="col-form-group">
                                     <label for="message-text" class="col-form-label">Конец:</label>
                                     {{ form.end_time }}
                                 </div>
@@ -303,19 +303,18 @@
 
                 deleteBtn.addEventListener('click', function() {
                     const eventId = this.getAttribute('data-event-id');
-                    if (confirm('Вы уверены, что хотите удалить это событие?')) {
+
                         $.ajax({
                             url: `/delete_event/${eventId}/`,
                             type: 'POST',
                             data: {
                                 csrfmiddlewaretoken: '{{ csrf_token }}',
                             },
-                            success: function(response) {
-                                alert(response.message);
+                            success: function() {
                                 window.location.reload();
                             },
                         });
-                    }
+
                 });
 
                 {#document.getElementById('modalNextWeek').addEventListener('click', function() {#}
