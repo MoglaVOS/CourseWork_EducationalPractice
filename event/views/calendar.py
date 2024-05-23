@@ -2,10 +2,10 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from datetime import datetime, timedelta
 from django.http import JsonResponse, Http404
+from datetime import datetime, timedelta
 
-from event.forms import EventChangeForm, EventCreateForm
+from event.forms import EventForm
 from event.models import Event
 from event.models.notification import Notification
 from account.models.invite import Invite
@@ -17,7 +17,7 @@ class CalendarView(LoginRequiredMixin, View):
     model = Event
     login_url = "account:signin"
     template_name = "calendar.html"
-    form_class = EventCreateForm
+    form_class = EventForm
 
     def get(self, request):
         # Calendar owner. Inviter if provided else user
@@ -92,12 +92,15 @@ class EventChangeView(LoginRequiredMixin, View):
     model = Event
     login_url = "account:signin"
     template_name = "event_change.html"
-    form_class = EventChangeForm
+    form_class = EventForm
 
     def get(self, request, event_id):
-        ev = get_object_or_404(Event, id=event_id)
+        event = get_object_or_404(Event, id=event_id)
+        form = self.form_class(instance=event)  # Create event form
 
-        form = self.form_class(instance=ev)  # Create event form
+        # Handle permission
+        if event.user.id != request.user.id:
+            return redirect("event:calendar")
 
         context = {
             "form": form
@@ -105,8 +108,12 @@ class EventChangeView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, event_id):
-        ev = get_object_or_404(Event, id=event_id)
-        form = self.form_class(request.POST, instance=ev)
+        event = get_object_or_404(Event, id=event_id)
+        # Handle permission
+        if event.user.id != request.user.id:
+            return redirect("event:calendar")
+
+        form = self.form_class(request.POST, instance=event)
         if form.is_valid():
             form = form.save(commit=False)
             form.user = request.user
@@ -150,23 +157,22 @@ def next_day(request, event_id):
         next_event.start_time += timedelta(days=1)
         next_event.end_time += timedelta(days=1)
         next_event.save()
-        return JsonResponse({'message': 'Success!'})
+        return JsonResponse({'message': 'Событие создано'})
     else:
-        return JsonResponse({'message': 'Error!'}, status=400)
+        return JsonResponse({'message': 'Ошибка'}, status=400)
 
 
 def next_week(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
     if request.method == 'POST':
         next_event = event
         next_event.id = None
         next_event.start_time += timedelta(days=7)
         next_event.end_time += timedelta(days=7)
         next_event.save()
-        return JsonResponse({'message': 'Success!'})
+        return JsonResponse({'message': 'Событие создано'})
     else:
-        return JsonResponse({'message': 'Error!'}, status=400)
+        return JsonResponse({'message': 'Ошибка'}, status=400)
 
 
 def next_month(request, event_id):
@@ -174,9 +180,9 @@ def next_month(request, event_id):
     if request.method == 'POST':
         next_event = event
         next_event.id = None
-        next_event.start_time += timedelta(months=1)
-        next_event.end_time += timedelta(months=1)
+        next_event.start_time += timedelta(days=30)
+        next_event.end_time += timedelta(days=30)
         next_event.save()
-        return JsonResponse({'message': 'Успех!'})
+        return JsonResponse({'message': 'Событие создано'})
     else:
-        return JsonResponse({'message': 'Ошибка!'}, status=400)
+        return JsonResponse({'message': 'Ошибка'}, status=400)

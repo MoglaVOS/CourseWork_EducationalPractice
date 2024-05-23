@@ -11,6 +11,8 @@ from event.forms import ChatForm
 from event.models.chat import ChatMessage
 from event.models.event import Event
 from event.models.notification import Notification
+from account.models.user import User
+from account.models.invite import Invite
 
 
 class ChatView(LoginRequiredMixin, View):
@@ -27,7 +29,13 @@ class ChatView(LoginRequiredMixin, View):
             ev = get_object_or_404(Event, id=ev_id)
         except Http404:
             ev = None
-        
+
+        members = [ev.user] + [
+            User.objects.get(email=x.invitee_email) for x in Invite.objects.get_invites_by_inviter(request.user)
+        ]
+        if request.user not in members:
+            return redirect("event:calendar")
+
         notifications = Notification.objects.get_all_notifications(user=request.user, time=timedelta(days=2))
         
         context = {

@@ -5,8 +5,8 @@ from event.models import Event
 from event.models.chat import ChatMessage
 
 
-class EventCreateForm(ModelForm):
-    """ Event Creation Form """
+class EventForm(ModelForm):
+    """ Event Create and Edit Form """
 
     class Meta:
         model = Event
@@ -14,6 +14,7 @@ class EventCreateForm(ModelForm):
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Введите название события"}),
             "description": forms.Textarea(attrs={"class": "form-control", "placeholder": "Введите описание события"}),
+            "location": forms.TextInput(attrs={"class": "form-control"}),
             "type": forms.Select(attrs={"class": "form-control", "placeholder": "Укажите тип"}),
             "priority": forms.Select(attrs={"class": "form-control", "placeholder": "Укажите приоритет"}),
             "start_time": DateInput(attrs={"type": "datetime-local", "class": "form-control"}, format="%Y-%m-%dT%H:%M"),
@@ -22,7 +23,7 @@ class EventCreateForm(ModelForm):
         exclude = ["user"]
 
     def __init__(self, *args, **kwargs):
-        super(EventCreateForm, self).__init__(*args, **kwargs)
+        super(EventForm, self).__init__(*args, **kwargs)
 
         self.fields["start_time"].input_formats = ("%Y-%m-%dT%H:%M",)
         self.fields["end_time"].input_formats = ("%Y-%m-%dT%H:%M",)
@@ -48,35 +49,3 @@ class ChatForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(ChatForm, self).__init__(*args, **kwargs)
-
-
-class EventChangeForm(ModelForm):
-    """ Event Change Form """
-
-    class Meta:
-        model = Event
-        fields = ["title", "description", "location", "type", "priority", "start_time", "end_time"]
-        widgets = {
-            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Введите название события"}),
-            "description": forms.Textarea(attrs={"class": "form-control", "placeholder": "Введите описание события"}),
-            "type": forms.Select(attrs={"class": "form-control", "placeholder": "Укажите тип"}),
-            "priority": forms.Select(attrs={"class": "form-control", "placeholder": "Укажите приоритет"}),
-            "start_time": DateInput(attrs={"type": "datetime-local", "class": "form-control"}, format="%Y-%m-%dT%H:%M"),
-            "end_time": DateInput(attrs={"type": "datetime-local", "class": "form-control"}, format="%Y-%m-%dT%H:%M"),
-        }
-        exclude = ["event"]
-
-    def __init__(self, *args, **kwargs):
-        super(EventChangeForm, self).__init__(*args, **kwargs)
-
-        self.fields["start_time"].input_formats = ("%Y-%m-%dT%H:%M",)
-        self.fields["end_time"].input_formats = ("%Y-%m-%dT%H:%M",)
-
-    def save(self, commit=True):
-        """ Save event """
-        event = super().save(commit=False)
-        if commit:
-            event.save()
-        return event
-
-
