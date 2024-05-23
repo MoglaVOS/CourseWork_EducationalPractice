@@ -66,7 +66,8 @@ class Notification(models.Model):
 
     def since(self):
         dt = localtime() - self.created_at
-        if dt.seconds == 0: return "только что"
+        if dt.seconds == 0:
+            return "только что"
         return get_time_since(dt) + " назад"
 
     def __str__(self):

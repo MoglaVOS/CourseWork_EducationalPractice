@@ -45,6 +45,16 @@
 
 <!-- Navigation Tabs between calendars -->
 <nav class="nav nav-pills nav-justified">
+    <!-- Update style of nav-item -->
+    <style>
+        .nav-item {
+            border-radius: 11px 11px 0 0 !important;
+        }
+        .bg-white {
+            margin: 0 3px 0 3px  !important;
+        }
+    </style>
+
     <!-- Account owner tab -->
     {% if owner.id == user.id %}
         <a class="nav-item nav-link bg-primary text-white" href="#">
@@ -150,8 +160,8 @@
                     <div class="modal-content">
                         <div class="modal-header bg-primary">
                             <h5 class="modal-title text-white" id="exampleModalLongTitle">Добавить новое событие</h5>
-                            <button id="modalClose1" type="button" class="warning" data-dismiss="modal" aria-label="Close">
-                                <span style="color: red; font-size: 20px" aria-hidden="true"><b>&times;</b></span>
+                            <button id="modalClose1" type="button" class="close" data-dismiss="modal" aria-label="close">
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <form method="post">
@@ -201,8 +211,8 @@
                     <div class="modal-content">
                         <div class="modal-header bg-primary">
                             <h5 class="modal-title text-white" id="event_title"></h5>
-                            <button id="modalDetailClose" type="button" class="warning" data-dismiss="modal" aria-label="Close">
-                                <span style="color: red; font-size: 20px" aria-hidden="true"><b>&times;</b></span>
+                            <button id="modalDetailClose" type="button" class="close" data-dismiss="modal" aria-label="close">
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <form method="post">
@@ -233,6 +243,7 @@
         </div>
     </div>
 </div>
+
 {% endblock content %}
 
 {% block extra_scripts %}
@@ -268,6 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
         initialDate: new Date(), // Set current date as initial
         locale: 'ru',            // Calendar language
         navLinks: true,          // Clickable Dates transferring to the timeGridDay
+        firstDay: 1,             // Week start with monday
 
         // Buttons in header (Prev/Next Today   Current Date    MonthView WeekView DayView)
         headerToolbar: {
@@ -309,10 +321,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const chatBtn = document.getElementById("modalChat");
             const editBtn = document.getElementById("modalEdit");
             const deleteBtn = document.getElementById("modalDelete");
-            {#const nextDate = document.getElementById("modalAllDay")#}
-            {#const nextWeekBtn = document.getElementById("modalNextWeek");#}
-            {#const nextDayBtn = document.getElementById("modalNextDay");#}
-
 
             modalTitle.textContent = title;
             modalTime.textContent  = formatDateTime(start) + ' - ' + formatDateTime(end);
@@ -347,9 +355,6 @@ document.addEventListener('DOMContentLoaded', function () {
             chatBtn.setAttribute("data-event-id", id);
             editBtn.setAttribute("data-event-id", id);
             deleteBtn.setAttribute("data-event-id", id);
-            {#nextDate.setAttribute("data-event-id-all", id);#}
-            {#nextWeekBtn.setAttribute("data-event-id-week", id);#}
-            {#nextDayBtn.setAttribute("data-event-id-day", id);#}
 
             modalDesc.textContent  = desc || '';
 
@@ -365,75 +370,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             deleteBtn.addEventListener('click', function() {
                 const eventId = this.getAttribute('data-event-id');
-
-                    $.ajax({
-                        url: `/delete_event/${eventId}/`,
-                        type: 'POST',
-                        data: {
-                            csrfmiddlewaretoken: '{{ csrf_token }}',
-                        },
-                        success: function() {
-                            window.location.reload();
-                        },
-                    });
-
+                $.ajax({
+                    url: `/delete_event/${eventId}/`,
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function() {
+                        window.location.reload();
+                    },
+                });
             });
-
-            {#document.getElementById('modalNextWeek').addEventListener('click', function() {#}
-            {#    const eventId = this.getAttribute('data-event-id-week');#}
-            {#    if (confirm('Вы уверены, что хотите добавить это событие на следующую неделю?')) {#}
-            {#        $.ajax({#}
-            {#            url: `/next_week/${eventId}/`,#}
-            {#            type: 'POST',#}
-            {#            data: {#}
-            {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
-            {#            },#}
-            {#            success: function(response) {#}
-            {#                alert(response.message);#}
-            {#                window.location.reload();#}
-            {#            },#}
-            {#        });#}
-            {#    }#}
-            {# }); #}
-            {##}
-            {#document.getElementById('modalNextDay').addEventListener('click', function() {#}
-            {#    const eventId = this.getAttribute('data-event-id-day');#}
-            {#    if (confirm('Вы уверены, что хотите добавить это событие на следующий день?')) {#}
-            {#        $.ajax({#}
-            {#            url: `/next_day/${eventId}/`,#}
-            {#            type: 'POST',#}
-            {#            data: {#}
-            {#                csrfmiddlewaretoken: '{{ csrf_token }}',#}
-            {#            },#}
-            {#            success: function(response) {#}
-            {#                alert(response.message);#}
-            {#                window.location.reload();#}
-            {#            },#}
-            {#        });#}
-            {#    }#}
-            {# });#}
-
-            {#document.addEventListener('DOMContentLoaded', function() {#}
-            {#    const form = document.querySelector('data-event-id-all');#}
-            {#    form.addEventListener('submit', function(event) {#}
-            {#        event.preventDefault();#}
-            {#        const formData = new FormData(form);#}
-            {#        fetch(form.action, {#}
-            {#            method: 'POST',#}
-            {#            url: `/next_date/${eventId}/`,#}
-            {#            body: formData#}
-            {#        })#}
-            {#            .then(response => response.json())#}
-            {#            .then(data => {#}
-            {#                // Обработка ответа от сервера#}
-            {#                console.log(data);#}
-            {#            })#}
-            {#            .catch(error => {#}
-            {#                // Обработка ошибки#}
-            {#                console.error(error);#}
-            {#            });#}
-            {#    });#}
-            {# }); #}
 
             modal.style.display = 'block';
         },

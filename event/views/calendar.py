@@ -91,7 +91,7 @@ class EventChangeView(LoginRequiredMixin, View):
     """ Calendar View. Main page """
     model = Event
     login_url = "account:signin"
-    template_name = "eventchange.html"
+    template_name = "event_change.html"
     form_class = EventChangeForm
 
     def get(self, request, event_id):
@@ -150,7 +150,7 @@ def next_day(request, event_id):
         next_event.start_time += timedelta(days=1)
         next_event.end_time += timedelta(days=1)
         next_event.save()
-        return JsonResponse({'message': 'Sucess!'})
+        return JsonResponse({'message': 'Success!'})
     else:
         return JsonResponse({'message': 'Error!'}, status=400)
 

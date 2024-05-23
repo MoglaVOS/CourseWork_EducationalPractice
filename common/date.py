@@ -31,6 +31,7 @@ def get_time_since(dt: timedelta):
 
     return f"{floor(s)} секунд"
 
+
 def localtime(t: datetime | None = None):
     if t is None: return datetime.now(ZoneInfo('Europe/Moscow'))
     return t.replace(tzinfo=ZoneInfo('Europe/Moscow'))

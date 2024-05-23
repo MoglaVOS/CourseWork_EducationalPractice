@@ -70,4 +70,3 @@ def invite_accept(request):
             return JsonResponse({"message": "Приглашения не существует"})
     else:
         return JsonResponse({"message": "Метод не поддерживается"})
-

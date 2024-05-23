@@ -67,7 +67,7 @@
                                             <button id="modalNextWeek" data-event-id-week="" type="button" class="btn btn-success">Каждую неделю</button><br>
                                             <button id="modalNextMonth" data-event-id-month="" type="button" class="btn btn-success">Каждый месяц</button><br>
                                             <a href="{% url 'event:calendar' %}" class="btn btn-danger">Назад</a>
-                                            <button id="modalChange" accept-change-id="" type="submit" class="btn btn-success">Изменить</button>
+                                            <button id="modalChange" type="submit" class="btn btn-success">Изменить</button>
                                         </div>
 
                                     </div>
@@ -145,7 +145,7 @@
     acceptBtn.addEventListener('click',function () {
         const eventId = this.getAttribute('accept-change-id');
         $.ajax({
-            url: 'event_change/${eventId}/',
+            url: `event_change/${eventId}/`,
             type: 'POST',
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}'

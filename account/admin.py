@@ -3,12 +3,12 @@ from django.contrib import admin
 from account.models.invite import Invite
 from account.models.user import User
 
-# Register your models here.
 
 @admin.register(Invite)
 class InviteAdmin(admin.ModelAdmin):
     list_display = ["inviter", "invitee_email", "status"]
     search_fields = ["inviter", "invitee_email"]
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

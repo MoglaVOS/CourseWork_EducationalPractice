@@ -13,6 +13,7 @@ class ChatMessageManager(models.Manager):
             return ChatMessage.objects.filter(is_deleted=False, event=event)
         return ChatMessage.objects.filter(is_deleted=False, event=None)
 
+
 class ChatMessage(models.Model):
     """ Chat message model """
 

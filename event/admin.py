@@ -5,8 +5,6 @@ from event.models.event import Event
 from event.models.notification import Notification
 
 
-# Register your models here.
-
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ["title", "description", "user", "is_read", "is_deleted"]

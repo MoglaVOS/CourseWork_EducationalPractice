@@ -116,7 +116,7 @@
                         "notif_id": notif_id,
                         csrfmiddlewaretoken: '{{ csrf_token }}',
                     },
-                    success: function(resp) {
+                    success: function() {
                         window.location = next_page;
                     }
                 });
