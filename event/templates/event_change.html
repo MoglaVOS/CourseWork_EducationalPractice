@@ -63,9 +63,9 @@
 
                                     <div class="col-md-12">
                                         Повторить событие?<br>
-                                        <button id="modalNextDay" type="button" class="btn btn-primary">Завтра</button>
-                                        <button id="modalNextWeek" type="button" class="btn btn-primary">Через неделю</button>
-                                        <button id="modalNextMonth" type="button" class="btn btn-primary">Через месяц</button>
+                                        <button type="button" class="btn btn-primary" onclick="copyEvent(1)">Завтра</button>
+                                        <button type="button" class="btn btn-primary" onclick="copyEvent(7)">Через неделю</button>
+                                        <button type="button" class="btn btn-primary" onclick="copyEvent(31)">Через месяц</button>
                                     </div>
                                     <br><br><br>
                                     <div class="col-md-12">
@@ -87,21 +87,16 @@
 </div>
 {% include 'base/js.html' %}
 <script>
-const acceptBtn = document.getElementById("modalChange");
-const nextDayBtn = document.getElementById("modalNextDay");
-const nextWeekBtn = document.getElementById("modalNextWeek");
-const nextMonthBtn = document.getElementById("modalNextMonth");
-
 const currentUrl = window.location.href;
 const parts = currentUrl.split("/");
 const id = parts[parts.length - 2];
-
-document.getElementById('modalNextDay').addEventListener('click', function() {
+function copyEvent(days) {
     if (confirm('Вы уверены, что хотите перенести это событие на следующий день?')) {
         $.ajax({
-            url: `/next_day/${id}/`,
+            url: `/copy_event/${id}/`,
             type: 'POST',
             data: {
+                'days': days,
                 csrfmiddlewaretoken: '{{ csrf_token }}',
             },
             success: function(response) {
@@ -110,39 +105,9 @@ document.getElementById('modalNextDay').addEventListener('click', function() {
             },
         });
     }
-});
-document.getElementById('modalNextWeek').addEventListener('click', function() {
-    if (confirm('Вы уверены, что хотите перенести это событие на следующую неделю?')) {
-        $.ajax({
-            url: `/next_week/${id}/`,
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-            },
-            success: function(response) {
-                alert(response.message);
-                window.location.reload();
-            },
-        });
-    }
-});
+}
 
-document.getElementById('modalNextMonth').addEventListener('click', function() {
-    if (confirm('Вы уверены, что хотите перенести это событие на следующий месяц?')) {
-        $.ajax({
-            url: `/next_month/${id}/`,
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-            },
-            success: function(response) {
-                alert(response.message);
-                window.location.reload();
-            },
-        });
-    }
-});
-
+const acceptBtn = document.getElementById("modalChange");
 acceptBtn.addEventListener('click',function () {
     $.ajax({
         url: `/event_change/${id}/`,

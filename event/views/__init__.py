@@ -3,9 +3,7 @@ from .calendar import CalendarView, EventChangeView, notif_read
 from .dashboard import DashboardView
 from .calendar import (
     delete_event,
-    next_week,
-    next_day,
-    next_month,
+    copy_event
 )
 
-__all__ = [CalendarView, DashboardView, ChatView, delete_event, next_week, next_day, next_month, notif_read]
+__all__ = [CalendarView, DashboardView, ChatView, delete_event, copy_event, notif_read]

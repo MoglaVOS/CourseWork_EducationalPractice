@@ -30,11 +30,12 @@ class ChatView(LoginRequiredMixin, View):
         except Http404:
             ev = None
 
-        members = [ev.user] + [
-            User.objects.get(email=x.invitee_email) for x in Invite.objects.get_invites_by_inviter(request.user)
-        ]
-        if request.user not in members:
-            return redirect("event:calendar")
+        if ev:
+            members = [ev.user] + [
+                User.objects.get(email=x.invitee_email) for x in Invite.objects.get_invites_by_inviter(ev.user)
+            ]
+            if request.user not in members:
+                return redirect("event:calendar")
 
         notifications = Notification.objects.get_all_notifications(user=request.user, time=timedelta(days=2))
         

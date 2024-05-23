@@ -99,7 +99,10 @@ class EventChangeView(LoginRequiredMixin, View):
         form = self.form_class(instance=event)  # Create event form
 
         # Handle permission
-        if event.user.id != request.user.id:
+        members = [event.user] + [
+            User.objects.get(email=x.invitee_email) for x in Invite.objects.get_invites_by_inviter(event.user)
+        ]
+        if request.user not in members:
             return redirect("event:calendar")
 
         context = {
@@ -109,14 +112,10 @@ class EventChangeView(LoginRequiredMixin, View):
 
     def post(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
-        # Handle permission
-        if event.user.id != request.user.id:
-            return redirect("event:calendar")
-
         form = self.form_class(request.POST, instance=event)
         if form.is_valid():
             form = form.save(commit=False)
-            form.user = request.user
+            form.user = event.user
             form.save()
             return redirect("event:calendar")
 
@@ -149,40 +148,20 @@ def delete_event(request, event_id):
         return JsonResponse({'message': 'Error!'}, status=400)
 
 
-def next_day(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
+def copy_event(request, event_id):
+    try:
+        event = get_object_or_404(Event, id=event_id)
+    except Http404:
+        return JsonResponse({'message': 'Событие не существует'})
+    days = int(request.POST.get("days"))
+
     if request.method == 'POST':
-        next_event = event
-        next_event.id = None
-        next_event.start_time += timedelta(days=1)
-        next_event.end_time += timedelta(days=1)
-        next_event.save()
-        return JsonResponse({'message': 'Событие создано'})
-    else:
-        return JsonResponse({'message': 'Ошибка'}, status=400)
-
-
-def next_week(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    if request.method == 'POST':
-        next_event = event
-        next_event.id = None
-        next_event.start_time += timedelta(days=7)
-        next_event.end_time += timedelta(days=7)
-        next_event.save()
-        return JsonResponse({'message': 'Событие создано'})
-    else:
-        return JsonResponse({'message': 'Ошибка'}, status=400)
-
-
-def next_month(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    if request.method == 'POST':
-        next_event = event
-        next_event.id = None
-        next_event.start_time += timedelta(days=30)
-        next_event.end_time += timedelta(days=30)
-        next_event.save()
+        new_event = event
+        new_event.user = event.user
+        new_event.id = None
+        new_event.start_time += timedelta(days=days)
+        new_event.end_time += timedelta(days=days)
+        new_event.save()
         return JsonResponse({'message': 'Событие создано'})
     else:
         return JsonResponse({'message': 'Ошибка'}, status=400)
