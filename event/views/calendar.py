@@ -174,35 +174,8 @@ def next_month(request, event_id):
     if request.method == 'POST':
         next_event = event
         next_event.id = None
-        next_event.start_time += timedelta(days=30)
-        next_event.end_time += timedelta(days=30)
-        next_event.save()
-        return JsonResponse({'message': 'Success!'})
-    else:
-        return JsonResponse({'message': 'Error!'}, status=400)
-
-
-def next_date(request, event_id, time_delta_hours=0, time_delta_minutes=0, new_date=None, repetition_frequency=None):
-    event = get_object_or_404(Event, id=event_id)
-    if request.method == 'POST':
-        next_event = event
-        next_event.id = None
-        next_event.start_time += timedelta(days=1)
-        next_event.end_time += timedelta(days=1)
-        next_event.start_time += timedelta(hours=time_delta_hours, minutes=time_delta_minutes)
-        next_event.end_time += timedelta(hours=time_delta_hours, minutes=time_delta_minutes)
-        if new_date:
-            next_event.start_date = new_date
-            next_event.end_date = new_date
-        if repetition_frequency == 'daily':
-            next_event.start_time += timedelta(days=1)
-            next_event.end_time += timedelta(days=1)
-        elif repetition_frequency == 'weekly':
-            next_event.start_time += timedelta(weeks=1)
-            next_event.end_time += timedelta(weeks=1)
-        elif repetition_frequency == 'monthly':
-            next_event.start_time += timedelta(days=30)
-            next_event.end_time += timedelta(days=30)
+        next_event.start_time += timedelta(months=1)
+        next_event.end_time += timedelta(months=1)
         next_event.save()
         return JsonResponse({'message': 'Успех!'})
     else:
